@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  articleId   String   @unique
+  nom         String
+  categorie   String
+  dateAchat   DateTime
+  prixAchat   Float
+  fraisDivers Float    @default(0)
+  prixVente   Float?
+  statut      String   @default("En stock")
+  notes       String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Parametre {
+  id          Int   @id @default(autoincrement())
+  seuilOrange Float @default(2)
+  margeCible  Float @default(0.3)
+}
+
+model FinancesParams {
+  id                 Int    @id @default(1)
+  nom1               String @default("Valentin")
+  nom2               String @default("Clara")
+  soldeDepart        Float  @default(23000)
+  objectifEpargne    Float  @default(500)
+  nbMoisSecurite     Int    @default(6)
+  anneeRef           Int    @default(2026)
+  revenu1Projection  Float  @default(2332)
+  revenu2Projection  Float  @default(436)
+}
+
+model FinancesCharge {
+  id      Int    @id @default(autoincrement())
+  nom     String
+  montant Float
+  type    String @default("fixe")
+}
+
+model FinancesMois {
+  id      Int   @id @default(autoincrement())
+  annee   Int
+  mois    Int
+  revenu1 Float @default(0)
+  revenu2 Float @default(0)
+
+  @@unique([annee, mois])
+}
+
+model InvestETF {
+  id           Int                @id @default(autoincrement())
+  isin         String             @unique
+  nom          String
+  nomCourt     String
+  ticker       String             @default("")
+  couleur      String             @default("#10b981")
+  transactions InvestTransaction[]
+}
+
+model InvestTransaction {
+  id        Int       @id @default(autoincrement())
+  etfId     Int
+  etf       InvestETF @relation(fields: [etfId], references: [id])
+  type      String    @default("achat")
+  quantite  Float
+  prix      Float
+  date      DateTime  @default(now())
+  notes     String?
+  createdAt DateTime  @default(now())
+}
+
+model InvestPlan {
+  id            Int   @id @default(1)
+  montantS1     Float @default(100)
+  montantS2     Float @default(100)
+  montantS3     Float @default(100)
+  montantS4     Float @default(150)
+  partsEmergS4  Int   @default(2)
+  partsStorxxS4 Int   @default(2)
+  cycleWeek     Int   @default(1)
+}
+
+// ── Fitness ──────────────────────────────────────────────────────────────────
+
+model FitnessProfile {
+  id                Int   @id @default(1)
+  objectifPas       Int   @default(10000)
+  objectifCal       Int   @default(2500)
+  objectifProteines Int   @default(150)
+  objectifGlucides  Int   @default(250)
+  objectifLipides   Int   @default(80)
+  poids             Float @default(75)
+  taille            Int   @default(178)
+  age               Int   @default(22)
+}
+
+model FitnessSeance {
+  id        Int               @id @default(autoincrement())
+  nom       String
+  type      String            @default("musculation")
+  date      DateTime          @default(now())
+  duree     Int               @default(60)
+  notes     String?
+  exercices FitnessExercice[]
+  createdAt DateTime          @default(now())
+}
+
+model FitnessExercice {
+  id       Int            @id @default(autoincrement())
+  seanceId Int
+  seance   FitnessSeance  @relation(fields: [seanceId], references: [id], onDelete: Cascade)
+  nom      String
+  muscle   String         @default("pectoraux")
+  ordre    Int            @default(0)
+  series   FitnessSerie[]
+}
+
+model FitnessSerie {
+  id          Int             @id @default(autoincrement())
+  exerciceId  Int
+  exercice    FitnessExercice @relation(fields: [exerciceId], references: [id], onDelete: Cascade)
+  repetitions Int
+  poids       Float
+  numero      Int             @default(1)
+}
+
+model FitnessJour {
+  id    Int            @id @default(autoincrement())
+  date  DateTime       @unique
+  pas   Int            @default(0)
+  poids Float?
+  repas FitnessRepas[]
+}
+
+model FitnessRepas {
+  id        Int         @id @default(autoincrement())
+  jourId    Int
+  jour      FitnessJour @relation(fields: [jourId], references: [id], onDelete: Cascade)
+  nom       String
+  calories  Int         @default(0)
+  proteines Float       @default(0)
+  glucides  Float       @default(0)
+  lipides   Float       @default(0)
+  moment    String      @default("dejeuner")
+}
