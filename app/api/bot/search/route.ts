@@ -5,23 +5,28 @@ export const dynamic = 'force-dynamic'
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 
 async function getVintedCookie(): Promise<string> {
-  // Fetch the catalog page to get a valid anonymous session cookie
-  const res = await fetch('https://www.vinted.fr/catalog', {
+  // If a pre-configured cookie is set (recommended for Vercel deployments,
+  // as Cloudflare blocks datacenter IPs), use it directly.
+  if (process.env.VINTED_COOKIE) {
+    return process.env.VINTED_COOKIE
+  }
+
+  // Fallback: try to fetch an anonymous session cookie dynamically
+  // (works on local dev / non-blocked IPs)
+  const res = await fetch('https://www.vinted.fr/', {
     headers: {
       'User-Agent': UA,
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       'Accept-Language': 'fr-FR,fr;q=0.9',
-      'Accept-Encoding': 'gzip, deflate, br',
     },
     redirect: 'follow',
     cache: 'no-store',
   })
 
-  // getSetCookie() returns a proper array (Node 18+), avoiding the comma-splitting bug
   const setCookies: string[] =
     typeof (res.headers as any).getSetCookie === 'function'
       ? (res.headers as any).getSetCookie()
-      : (res.headers.get('set-cookie') ?? '').split(/(?<=;),\s*/)
+      : (res.headers.get('set-cookie') ?? '').split(/,(?=\s*\w+=)/)
 
   return setCookies
     .map((c: string) => c.split(';')[0].trim())
@@ -76,11 +81,17 @@ export async function GET(req: NextRequest) {
     })
 
     if (!res.ok) {
-      const body = await res.text().catch(() => '')
-      return NextResponse.json(
-        { error: `Vinted API error: ${res.status}`, detail: body.slice(0, 200) },
-        { status: res.status },
-      )
+      if (res.status === 401) {
+        return NextResponse.json(
+          {
+            error: process.env.VINTED_COOKIE
+              ? 'Cookie Vinted expiré — regénère VINTED_COOKIE dans les variables Vercel'
+              : 'Cookie Vinted invalide — ajoute VINTED_COOKIE dans les variables d\'environnement Vercel',
+          },
+          { status: 401 },
+        )
+      }
+      return NextResponse.json({ error: `Vinted API error: ${res.status}` }, { status: res.status })
     }
 
     const data = await res.json()
