@@ -164,7 +164,7 @@ function SeanceCard({
 }) {
   const [expanded, setExpanded] = useState(false)
   const vol = totalVolume(seance)
-  const muscles = [...new Set(seance.exercices.map(e => e.muscle))]
+  const muscles = Array.from(new Set(seance.exercices.map(e => e.muscle)))
   const typeInfo = SEANCE_TYPES.find(t => t.value === seance.type) ?? SEANCE_TYPES[0]
   const date = new Date(seance.date)
 
