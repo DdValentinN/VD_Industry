@@ -790,7 +790,7 @@ export default function FitnessPage() {
         <div className="absolute top-0 left-0 w-[600px] h-[300px] bg-orange-500/8 rounded-full blur-3xl -translate-x-1/3 -translate-y-1/2" />
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-red-500/5 rounded-full blur-3xl translate-x-1/4 -translate-y-1/3" />
 
-        <div className="relative px-6 pt-8 pb-6">
+        <div className="relative px-4 sm:px-6 pt-8 pb-6">
           {/* Title row */}
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
@@ -845,13 +845,13 @@ export default function FitnessPage() {
       </div>
 
       {/* ── Tabs ──────────────────────────────────────────────────────────── */}
-      <div className="px-6 border-b border-white/6">
-        <div className="flex gap-0">
+      <div className="px-4 sm:px-6 border-b border-white/6">
+        <div className="flex gap-0 overflow-x-auto scrollbar-none">
           {TABS.map(t => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`px-4 py-3 text-sm font-medium border-b-2 transition-all ${
+              className={`px-3 sm:px-4 py-3 text-xs sm:text-sm font-medium border-b-2 transition-all whitespace-nowrap ${
                 tab === t
                   ? 'border-orange-500 text-orange-400'
                   : 'border-transparent text-gray-600 hover:text-gray-300'
@@ -864,7 +864,7 @@ export default function FitnessPage() {
       </div>
 
       {/* ── Content ───────────────────────────────────────────────────────── */}
-      <div className="px-6 py-6 max-w-5xl mx-auto">
+      <div className="px-4 sm:px-6 py-6 max-w-5xl mx-auto">
 
         {/* ══ TAB: AUJOURD'HUI ══════════════════════════════════════════════ */}
         {tab === 'Aujourd\'hui' && (
@@ -1154,7 +1154,7 @@ export default function FitnessPage() {
                   <p className="text-[10px] text-gray-600">Formule : distance × {profile.poids}kg × 1.036 (foulée {Math.round(profile.taille * 0.415)}cm)</p>
                 </div>
               </div>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[3000, 5000, 8000, 10000, 12000, 15000, 18000, 20000].map(steps => (
                   <div
                     key={steps}
@@ -1231,7 +1231,7 @@ export default function FitnessPage() {
               {aiLoading && (
                 <div className="rounded-xl bg-white/3 border border-white/8 p-4 animate-pulse mb-3">
                   <div className="h-3 bg-white/10 rounded w-1/3 mb-3" />
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {[...Array(4)].map((_, i) => <div key={i} className="h-8 bg-white/5 rounded-lg" />)}
                   </div>
                 </div>

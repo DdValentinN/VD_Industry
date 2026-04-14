@@ -72,49 +72,56 @@ export function ArticleTable({ articles, parametres, onEdit }: ArticleTableProps
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3">
-        <select
-          value={filterStatut}
-          onChange={(e) => { setFilterStatut(e.target.value); setPage(1) }}
-          className={selectClass}
-        >
-          <option value="">Tous les statuts</option>
-          <option value="En stock">En stock</option>
-          <option value="Vendu">Vendu</option>
-        </select>
-
-        <select
-          value={filterCategorie}
-          onChange={(e) => { setFilterCategorie(e.target.value); setPage(1) }}
-          className={selectClass}
-        >
-          <option value="">Toutes catégories</option>
-          {categories.map((c) => <option key={c} value={c}>{c}</option>)}
-        </select>
-
-        <select
-          value={filterMois}
-          onChange={(e) => { setFilterMois(e.target.value); setPage(1) }}
-          className={selectClass}
-        >
-          <option value="">Tous les mois</option>
-          {moisList.map((m) => (
-            <option key={m} value={m}>
-              {format(new Date(m + '-01'), 'MMMM yyyy', { locale: fr })}
-            </option>
-          ))}
-        </select>
-
-        {(filterStatut || filterCategorie || filterMois) && (
-          <button
-            onClick={resetFilters}
-            className="text-sm text-gray-400 hover:text-white underline transition-colors"
+      <div className="flex flex-col gap-3">
+        {/* Top row: filter selects */}
+        <div className="flex flex-wrap items-center gap-2">
+          <select
+            value={filterStatut}
+            onChange={(e) => { setFilterStatut(e.target.value); setPage(1) }}
+            className={selectClass}
           >
-            Réinitialiser
-          </button>
-        )}
+            <option value="">Tous les statuts</option>
+            <option value="En stock">En stock</option>
+            <option value="Vendu">Vendu</option>
+          </select>
 
-        <div className="ml-auto flex items-center gap-3">
+          <select
+            value={filterCategorie}
+            onChange={(e) => { setFilterCategorie(e.target.value); setPage(1) }}
+            className={selectClass}
+          >
+            <option value="">Toutes catégories</option>
+            {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+
+          <select
+            value={filterMois}
+            onChange={(e) => { setFilterMois(e.target.value); setPage(1) }}
+            className={selectClass}
+          >
+            <option value="">Tous les mois</option>
+            {moisList.map((m) => (
+              <option key={m} value={m}>
+                {format(new Date(m + '-01'), 'MMMM yyyy', { locale: fr })}
+              </option>
+            ))}
+          </select>
+
+          {(filterStatut || filterCategorie || filterMois) && (
+            <button
+              onClick={resetFilters}
+              className="text-sm text-gray-400 hover:text-white underline transition-colors"
+            >
+              Réinitialiser
+            </button>
+          )}
+        </div>
+
+        {/* Bottom row: per-page + count */}
+        <div className="flex items-center justify-between sm:justify-end gap-3">
+          <span className="text-sm text-gray-500 sm:hidden">
+            {filtered.length} article(s)
+          </span>
           <select
             value={perPage}
             onChange={(e) => { setPerPage(Number(e.target.value)); setPage(1) }}
@@ -125,7 +132,7 @@ export function ArticleTable({ articles, parametres, onEdit }: ArticleTableProps
             <option value={100}>100 / page</option>
             <option value={0}>Tout afficher</option>
           </select>
-          <span className="text-sm text-gray-500">
+          <span className="hidden sm:inline text-sm text-gray-500">
             {filtered.length} article(s)
           </span>
         </div>

@@ -132,14 +132,14 @@ export function About({ nbVendus, beneficeTotal, margeMoyenne }: AboutProps) {
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="text-xs text-gray-500 tracking-wider uppercase">Stats Vinted · Live</span>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4">
                 {[
                   { label: 'Articles vendus', value: nbVendus, decimals: 0, suffix: '' },
                   { label: 'Bénéfice net', value: beneficeTotal, decimals: 0, prefix: '', suffix: '€' },
                   { label: 'Marge moy.', value: margeMoyenne * 100, decimals: 1, suffix: '%' },
                 ].map((s) => (
                   <div key={s.label} className="text-center">
-                    <div className="text-2xl font-black text-emerald-400 tabular-nums">
+                    <div className="text-lg sm:text-2xl font-black text-emerald-400 tabular-nums">
                       <CountUp target={s.value} decimals={s.decimals} prefix={s.prefix ?? ''} suffix={s.suffix} />
                     </div>
                     <div className="text-[11px] text-gray-600 mt-1 leading-tight">{s.label}</div>

@@ -520,7 +520,7 @@ export default function FinancesPage() {
   const selectClass = 'rounded-md border border-white/15 bg-[#1a1a1a] text-white px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-sky-500'
 
   return (
-    <div className="p-6 max-w-full space-y-6">
+    <div className="p-4 sm:p-6 max-w-full space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -528,7 +528,7 @@ export default function FinancesPage() {
             <Users className="w-5 h-5 text-sky-400" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-white">Finances Couple</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">Finances Couple</h1>
             <p className="text-gray-400 mt-0.5 text-sm">{params.nom1} &amp; {params.nom2} · Suivi budgétaire</p>
           </div>
         </div>

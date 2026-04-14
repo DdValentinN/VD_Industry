@@ -33,10 +33,10 @@ export default function DashboardPage() {
   if (!stats) return null
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-8">
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard</h1>
         <p className="text-gray-400 mt-1">Vue d&apos;ensemble de ton activité Vinted</p>
       </div>
 

@@ -319,7 +319,7 @@ function PlanCard({ plan, portfolio }: { plan: InvestPlan; portfolio: PortfolioE
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Week tabs */}
-        <div className="grid grid-cols-4 gap-1.5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
           {weeks.map((w) => {
             const p = weekPlan(w)
             const isCurrent = w === current
@@ -451,7 +451,7 @@ export default function InvestissementsPage() {
   const selectedETF = portfolio[selectedIdx]
 
   return (
-    <div className="p-6 max-w-full space-y-6">
+    <div className="p-4 sm:p-6 max-w-full space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -459,7 +459,7 @@ export default function InvestissementsPage() {
             <TrendingUp className="w-5 h-5 text-emerald-500" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-white">Mon PEA</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">Mon PEA</h1>
             <p className="text-gray-400 mt-0.5 text-sm">Tracker d&apos;investissements · Données en temps réel</p>
           </div>
         </div>
@@ -609,7 +609,7 @@ export default function InvestissementsPage() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="max-h-[320px] overflow-y-auto">
+            <div className="max-h-[320px] overflow-y-auto overflow-x-auto">
               {transactions.length === 0 ? (
                 <p className="text-center text-gray-500 text-sm py-8">Aucune transaction</p>
               ) : (

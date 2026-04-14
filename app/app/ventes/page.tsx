@@ -40,14 +40,14 @@ export default function VentesPage() {
   function openEdit(article: Article) { setEditArticle(article); setModalOpen(true) }
 
   return (
-    <div className="p-6 max-w-full space-y-6">
-      <div className="flex items-center justify-between gap-4">
+    <div className="p-4 sm:p-6 max-w-full space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-white">Ventes</h1>
-          <p className="text-gray-400 mt-1">Tous tes articles — achetés et revendus</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Ventes</h1>
+          <p className="text-gray-400 mt-1 text-sm sm:text-base">Tous tes articles — achetés et revendus</p>
         </div>
         {isAdmin && (
-          <Button onClick={openAdd} className="shrink-0">
+          <Button onClick={openAdd} className="w-full sm:w-auto shrink-0">
             <Plus className="w-4 h-4 mr-2" />
             Ajouter un article
           </Button>

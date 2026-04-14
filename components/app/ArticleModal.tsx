@@ -242,8 +242,8 @@ export function ArticleModal({ open, onClose, article, onSuccess }: ArticleModal
           </div>
 
           {/* Fields */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="col-span-1 sm:col-span-2">
               <Label htmlFor="nom">Nom de l&apos;article *</Label>
               <Input
                 id="nom"
@@ -330,7 +330,7 @@ export function ArticleModal({ open, onClose, article, onSuccess }: ArticleModal
               />
             </div>
 
-            <div className="col-span-2">
+            <div className="col-span-1 sm:col-span-2">
               <Label htmlFor="notes">Notes</Label>
               <Textarea
                 id="notes"
