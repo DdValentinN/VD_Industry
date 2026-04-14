@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, ShoppingBag, Settings, ArrowLeft,
-  TrendingUp, Menu, X, LogIn, LogOut, Shield, Lock, Users, Flame,
+  TrendingUp, Menu, X, LogIn, LogOut, Shield, Lock, Users, Flame, Bot,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
@@ -16,6 +16,7 @@ const PUBLIC_NAV = [
   { href: '/app/finances', icon: Users, label: 'Finances Couple' },
   { href: '/app/investissements', icon: TrendingUp, label: 'Investissements' },
   { href: '/app/fitness', icon: Flame, label: 'Fitness' },
+  { href: '/app/bot', icon: Bot, label: 'Bot Vinted' },
 ]
 
 const ADMIN_NAV = [
@@ -24,6 +25,7 @@ const ADMIN_NAV = [
   { href: '/app/finances', icon: Users, label: 'Finances Couple' },
   { href: '/app/investissements', icon: TrendingUp, label: 'Investissements' },
   { href: '/app/fitness', icon: Flame, label: 'Fitness' },
+  { href: '/app/bot', icon: Bot, label: 'Bot Vinted' },
   { href: '/app/parametres', icon: Settings, label: 'Paramètres' },
 ]
 
