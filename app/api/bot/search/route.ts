@@ -2,38 +2,31 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
-const HEADERS = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-  'Accept': 'application/json, text/plain, */*',
-  'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8',
-  'Accept-Encoding': 'gzip, deflate, br',
-  'Referer': 'https://www.vinted.fr/',
-  'Origin': 'https://www.vinted.fr',
-  'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
-  'sec-ch-ua-mobile': '?0',
-  'sec-ch-ua-platform': '"Windows"',
-  'sec-fetch-dest': 'empty',
-  'sec-fetch-mode': 'cors',
-  'sec-fetch-site': 'same-origin',
-}
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 
 async function getVintedCookie(): Promise<string> {
-  const res = await fetch('https://www.vinted.fr/', {
+  // Fetch the catalog page to get a valid anonymous session cookie
+  const res = await fetch('https://www.vinted.fr/catalog', {
     headers: {
-      'User-Agent': HEADERS['User-Agent'],
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-      'Accept-Language': HEADERS['Accept-Language'],
+      'User-Agent': UA,
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Language': 'fr-FR,fr;q=0.9',
+      'Accept-Encoding': 'gzip, deflate, br',
     },
     redirect: 'follow',
+    cache: 'no-store',
   })
-  const raw = res.headers.get('set-cookie') || ''
-  // Extract all cookie key=value pairs
-  const cookies = raw
-    .split(/,(?=[^ ].*?=)/)
-    .map((c) => c.split(';')[0].trim())
+
+  // getSetCookie() returns a proper array (Node 18+), avoiding the comma-splitting bug
+  const setCookies: string[] =
+    typeof (res.headers as any).getSetCookie === 'function'
+      ? (res.headers as any).getSetCookie()
+      : (res.headers.get('set-cookie') ?? '').split(/(?<=;),\s*/)
+
+  return setCookies
+    .map((c: string) => c.split(';')[0].trim())
     .filter(Boolean)
     .join('; ')
-  return cookies
 }
 
 export async function GET(req: NextRequest) {
@@ -59,23 +52,35 @@ export async function GET(req: NextRequest) {
   const statusIds = searchParams.getAll('status_ids[]')
   statusIds.forEach((id) => params.append('status_ids[]', id))
 
-  const url = `https://www.vinted.fr/api/v2/catalog/items?${params.toString()}`
+  const apiUrl = `https://www.vinted.fr/api/v2/catalog/items?${params.toString()}`
 
   try {
-    // Step 1 — get session cookie
     const cookie = await getVintedCookie()
 
-    // Step 2 — fetch items with cookie
-    const res = await fetch(url, {
+    const res = await fetch(apiUrl, {
       headers: {
-        ...HEADERS,
+        'User-Agent': UA,
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'fr-FR,fr;q=0.9',
+        'Referer': 'https://www.vinted.fr/catalog',
+        'Origin': 'https://www.vinted.fr',
+        'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-origin',
         ...(cookie ? { Cookie: cookie } : {}),
       },
       cache: 'no-store',
     })
 
     if (!res.ok) {
-      return NextResponse.json({ error: `Vinted API error: ${res.status}` }, { status: res.status })
+      const body = await res.text().catch(() => '')
+      return NextResponse.json(
+        { error: `Vinted API error: ${res.status}`, detail: body.slice(0, 200) },
+        { status: res.status },
+      )
     }
 
     const data = await res.json()
