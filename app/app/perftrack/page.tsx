@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { ExternalLink, Users, BarChart3, Activity, Calendar, Trophy, Zap, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -14,6 +15,8 @@ const FEATURES = [
 ]
 
 export default function PerfTrackPage() {
+  const [imgError, setImgError] = useState(false)
+
   return (
     <div className="min-h-screen">
       {/* Hero */}
@@ -70,31 +73,29 @@ export default function PerfTrackPage() {
 
           {/* Preview image */}
           <div className="rounded-2xl border border-white/10 overflow-hidden bg-[#0D1117] mb-12 shadow-2xl">
-            {/* Replace perftrack-preview.png with your image in the /public folder */}
             <div className="relative w-full aspect-video">
-              <Image
-                src="/perftrack-preview.png"
-                alt="PerfTrack Dashboard Preview"
-                fill
-                className="object-cover object-top"
-                onError={(e) => {
-                  // Fallback if image not found
-                  (e.target as HTMLImageElement).style.display = 'none'
-                }}
-              />
-              {/* Fallback placeholder shown until image is added */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[#0D1117]">
-                <span className="text-5xl">⚽</span>
-                <p className="text-gray-600 text-sm">Aperçu de l&apos;application</p>
-                <a
-                  href="https://perftrack-ap4.netlify.app/dashboard"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#00FF87] text-xs underline underline-offset-4"
-                >
-                  perftrack-ap4.netlify.app
-                </a>
-              </div>
+              {!imgError ? (
+                <Image
+                  src="/perftrack-preview.png"
+                  alt="PerfTrack Dashboard Preview"
+                  fill
+                  className="object-cover object-top"
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                  <span className="text-5xl">⚽</span>
+                  <p className="text-gray-600 text-sm">Aperçu de l&apos;application</p>
+                  <a
+                    href="https://perftrack-ap4.netlify.app/dashboard"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#00FF87] text-xs underline underline-offset-4"
+                  >
+                    perftrack-ap4.netlify.app
+                  </a>
+                </div>
+              )}
             </div>
           </div>
 
