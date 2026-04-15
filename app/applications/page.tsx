@@ -39,7 +39,7 @@ async function getFitnessStats() {
 
 async function getInvestStats() {
   try {
-    const etfs = await prisma.investETF.findMany({ include: { transactions: true } })
+    const etfs = await prisma.investETF.findMany({ where: { userId: 'valentin' }, include: { transactions: true } })
     const nbETFs = etfs.length
     let coutTotal = 0
     for (const etf of etfs) {
