@@ -31,27 +31,40 @@ export async function GET(req: NextRequest) {
       include: { transactions: { orderBy: { date: 'asc' } } },
     })
 
-    // Auto-seed ETF definitions for new users (copy from valentin, no transactions)
+    // Auto-seed ETFs for known users with no data yet
     if (etfs.length === 0 && userId !== 'valentin') {
-      const template = await prisma.investETF.findMany({ where: { userId: 'valentin' } })
-      for (const e of template) {
+      // Per-user ETF definitions (each user has their own ISINs / positions)
+      const USER_ETFS: Record<string, { isin: string; nom: string; nomCourt: string; couleur: string; quantite: number; prix: number }[]> = {
+        loukasbrz: [
+          { isin: 'FR001400U5Q4', nom: 'MSCI World PEA', nomCourt: 'MSCI World',    couleur: '#10b981', quantite: 5, prix: 45 },
+          { isin: 'FR006174348',  nom: 'PEA Emergents Monde', nomCourt: 'PEA Emergents', couleur: '#a78bfa', quantite: 1, prix: 30 },
+        ],
+      }
+
+      const seeds = USER_ETFS[userId] ?? []
+      for (const s of seeds) {
         try {
-          await prisma.investETF.upsert({
-            where: { isin_userId: { isin: e.isin, userId } },
-            update: {},
-            create: {
-              isin:     e.isin,
-              nom:      e.nom,
-              nomCourt: e.nomCourt,
-              ticker:   e.ticker,
-              couleur:  e.couleur,
-              userId,
-            },
-          })
+          const existing = await prisma.investETF.findFirst({ where: { isin: s.isin, userId } })
+          if (!existing) {
+            const etf = await prisma.investETF.create({
+              data: { isin: s.isin, nom: s.nom, nomCourt: s.nomCourt, ticker: '', couleur: s.couleur, userId },
+            })
+            await prisma.investTransaction.create({
+              data: { etfId: etf.id, type: 'achat', quantite: s.quantite, prix: s.prix, date: new Date('2026-01-01'), notes: 'Position initiale' },
+            })
+          }
         } catch (err) {
-          console.error('[invest/portfolio] seed ETF failed', e.isin, userId, err)
+          console.error('[invest/portfolio] seed ETF failed', s.isin, userId, err)
         }
       }
+
+      // Ensure InvestPlan exists for this user
+      await prisma.investPlan.upsert({
+        where: { userId },
+        update: {},
+        create: { userId, montantS1: 100, montantS2: 100, montantS3: 100, montantS4: 150, partsEmergS4: 2, partsStorxxS4: 2, cycleWeek: 1 },
+      })
+
       etfs = await prisma.investETF.findMany({
         where: { userId },
         include: { transactions: { orderBy: { date: 'asc' } } },
