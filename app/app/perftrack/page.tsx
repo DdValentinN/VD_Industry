@@ -72,31 +72,40 @@ export default function PerfTrackPage() {
           </a>
 
           {/* Preview image */}
-          <div className="rounded-2xl border border-white/10 overflow-hidden bg-[#0D1117] mb-12 shadow-2xl">
-            <div className="relative w-full aspect-video">
-              {!imgError ? (
-                <Image
-                  src="/perftrack-preview.png"
-                  alt="PerfTrack Dashboard Preview"
-                  fill
-                  className="object-contain"
-                  onError={() => setImgError(true)}
-                />
-              ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                  <span className="text-5xl">⚽</span>
-                  <p className="text-gray-600 text-sm">Aperçu de l&apos;application</p>
-                  <a
-                    href="https://perftrack-ap4.netlify.app/dashboard"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#00FF87] text-xs underline underline-offset-4"
-                  >
-                    perftrack-ap4.netlify.app
-                  </a>
-                </div>
-              )}
+          <div className="relative mb-12 flex justify-center">
+            {/* Glow background */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-72 h-72 rounded-full bg-[#00FF87]/10 blur-[80px]" />
             </div>
+
+            {!imgError ? (
+              <div className="relative group">
+                {/* Neon border frame */}
+                <div className="absolute -inset-[2px] rounded-2xl bg-gradient-to-b from-[#00FF87]/40 via-[#00FF87]/10 to-transparent blur-[2px]" />
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-[#00FF87]/10 border border-[#00FF87]/20 max-w-sm mx-auto">
+                  <Image
+                    src="/perftrack-preview.png"
+                    alt="PerfTrack Preview"
+                    width={400}
+                    height={560}
+                    className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                    onError={() => setImgError(true)}
+                  />
+                  {/* Gradient overlay at bottom */}
+                  <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
+                  {/* Live badge on image */}
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-[#00FF87]/30 text-[#00FF87] text-[11px] font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00FF87] animate-pulse" />
+                    PerfTrack Live
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center gap-3 py-16">
+                <span className="text-5xl">⚽</span>
+                <p className="text-gray-600 text-sm">Aperçu de l&apos;application</p>
+              </div>
+            )}
           </div>
 
           {/* Description */}
