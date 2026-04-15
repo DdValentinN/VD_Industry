@@ -227,9 +227,12 @@ function DonutLabel({ cx, cy, total }: { cx: number; cy: number; total: number }
 // ─── Overview Tab ─────────────────────────────────────────────────────────────
 
 function OverviewTab({ portfolio, totaux }: { portfolio: PortfolioETF[]; totaux: Totaux }) {
+  const isEmpty = totaux.valeurTotale === 0
+
+  // When all values are 0, give equal weight so the donut renders
   const alloc = portfolio.map(e => ({
     name:  e.nomCourt,
-    value: e.valeurActuelle,
+    value: isEmpty ? 1 : e.valeurActuelle,
     color: e.couleur,
   }))
 
@@ -274,18 +277,28 @@ function OverviewTab({ portfolio, totaux }: { portfolio: PortfolioETF[]; totaux:
           <div className="flex items-center justify-center">
             <PieChart width={240} height={240}>
               <Pie
-                data={alloc}
+                data={alloc.length > 0 ? alloc : [{ name: 'Vide', value: 1, color: 'rgba(255,255,255,0.06)' }]}
                 cx={120} cy={120}
                 innerRadius={72} outerRadius={100}
-                paddingAngle={3}
+                paddingAngle={isEmpty ? 0 : 3}
                 dataKey="value"
                 label={false}
+                strokeWidth={0}
               >
-                {alloc.map((entry, i) => (
-                  <Cell key={i} fill={entry.color} stroke="transparent" />
+                {(alloc.length > 0 ? alloc : [{ name: 'Vide', value: 1, color: 'rgba(255,255,255,0.06)' }]).map((entry, i) => (
+                  <Cell key={i} fill={isEmpty ? 'rgba(255,255,255,0.08)' : entry.color} stroke="transparent" />
                 ))}
               </Pie>
-              <DonutLabel cx={120} cy={120} total={totaux.valeurTotale} />
+              {isEmpty
+                ? (
+                  <text x={120} y={120} textAnchor="middle" dominantBaseline="middle">
+                    <tspan x={120} dy="-8" fontSize="13" fill="rgba(255,255,255,0.3)">Portfolio</tspan>
+                    <tspan x={120} dy="22" fontSize="15" fontWeight="700" fill="rgba(255,255,255,0.4)">Vide</tspan>
+                  </text>
+                ) : (
+                  <DonutLabel cx={120} cy={120} total={totaux.valeurTotale} />
+                )
+              }
             </PieChart>
           </div>
           {/* Legend */}
@@ -302,6 +315,9 @@ function OverviewTab({ portfolio, totaux }: { portfolio: PortfolioETF[]; totaux:
         {/* Allocation bars */}
         <div className="rounded-2xl border border-white/10 bg-[#111] p-5 flex flex-col justify-between">
           <p className="text-xs text-gray-500 uppercase tracking-wider mb-4">Détail du portefeuille</p>
+          {isEmpty && (
+            <p className="text-xs text-gray-600 mb-3 italic">Aucune position — ajoute ta première transaction via le bouton "+ Transaction"</p>
+          )}
           <div className="space-y-4">
             {portfolio
               .slice()
@@ -318,10 +334,12 @@ function OverviewTab({ portfolio, totaux }: { portfolio: PortfolioETF[]; totaux:
                       </div>
                       <div className="flex items-center gap-3 text-sm">
                         <span className="text-gray-400 tabular-nums">{formatCurrency(etf.valeurActuelle)}</span>
-                        <span className={cn('text-xs font-semibold w-14 text-right tabular-nums', isUp ? 'text-emerald-400' : 'text-red-400')}>
-                          {isUp ? '+' : ''}{(etf.performance * 100).toFixed(2)}%
-                        </span>
-                        <span className="text-gray-500 w-10 text-right tabular-nums">{pct.toFixed(1)}%</span>
+                        {!isEmpty && (
+                          <span className={cn('text-xs font-semibold w-14 text-right tabular-nums', isUp ? 'text-emerald-400' : 'text-red-400')}>
+                            {isUp ? '+' : ''}{(etf.performance * 100).toFixed(2)}%
+                          </span>
+                        )}
+                        <span className="text-gray-600 w-10 text-right tabular-nums">{pct.toFixed(1)}%</span>
                       </div>
                     </div>
                     <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
@@ -802,7 +820,7 @@ interface Totaux {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function InvestissementsPage() {
-  const { isAdmin } = useAuth()
+  const { isAdmin, isLoggedIn } = useAuth()
   const [portfolio, setPortfolio]       = useState<PortfolioETF[]>([])
   const [plan, setPlan]                 = useState<InvestPlan | null>(null)
   const [transactions, setTransactions] = useState<InvestTransaction[]>([])
@@ -925,7 +943,7 @@ export default function InvestissementsPage() {
             <RefreshCw className={cn('w-3.5 h-3.5', refreshing && 'animate-spin')} />
             Actualiser
           </button>
-          {isAdmin && (
+          {isLoggedIn && (
             <Button size="sm" onClick={() => setTxModal(true)} className="gap-1.5">
               <Plus className="w-3.5 h-3.5" /> Transaction
             </Button>

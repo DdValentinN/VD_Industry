@@ -34,23 +34,28 @@ export async function GET(req: NextRequest) {
     // Auto-seed ETF definitions for new users (copy from valentin, no transactions)
     if (etfs.length === 0 && userId !== 'valentin') {
       const template = await prisma.investETF.findMany({ where: { userId: 'valentin' } })
-      if (template.length > 0) {
-        await prisma.investETF.createMany({
-          data: template.map(e => ({
-            isin:     e.isin,
-            nom:      e.nom,
-            nomCourt: e.nomCourt,
-            ticker:   e.ticker,
-            couleur:  e.couleur,
-            userId,
-          })),
-          skipDuplicates: true,
-        })
-        etfs = await prisma.investETF.findMany({
-          where: { userId },
-          include: { transactions: { orderBy: { date: 'asc' } } },
-        })
+      for (const e of template) {
+        try {
+          await prisma.investETF.upsert({
+            where: { isin_userId: { isin: e.isin, userId } },
+            update: {},
+            create: {
+              isin:     e.isin,
+              nom:      e.nom,
+              nomCourt: e.nomCourt,
+              ticker:   e.ticker,
+              couleur:  e.couleur,
+              userId,
+            },
+          })
+        } catch (err) {
+          console.error('[invest/portfolio] seed ETF failed', e.isin, userId, err)
+        }
       }
+      etfs = await prisma.investETF.findMany({
+        where: { userId },
+        include: { transactions: { orderBy: { date: 'asc' } } },
+      })
     }
 
     const results = await Promise.all(
