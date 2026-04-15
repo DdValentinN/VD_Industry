@@ -199,7 +199,7 @@ export function Hero() {
                   src="/me.jpg"
                   alt="Valentin Delattre"
                   fill
-                  className="object-cover object-top"
+                  className="object-cover object-[center_15%]"
                   priority
                   onError={() => {}}
                 />
