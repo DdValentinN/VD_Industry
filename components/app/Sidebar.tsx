@@ -17,6 +17,7 @@ const PUBLIC_NAV = [
   { href: '/app/investissements', icon: TrendingUp, label: 'Investissements' },
   { href: '/app/fitness', icon: Flame, label: 'Fitness' },
   { href: '/app/bot', icon: Bot, label: 'Bot Vinted' },
+  { href: '/app/perftrack', icon: Users, label: 'PerfTrack' },
 ]
 
 const ADMIN_NAV = [
@@ -26,6 +27,7 @@ const ADMIN_NAV = [
   { href: '/app/investissements', icon: TrendingUp, label: 'Investissements' },
   { href: '/app/fitness', icon: Flame, label: 'Fitness' },
   { href: '/app/bot', icon: Bot, label: 'Bot Vinted' },
+  { href: '/app/perftrack', icon: Users, label: 'PerfTrack' },
   { href: '/app/parametres', icon: Settings, label: 'Paramètres' },
 ]
 

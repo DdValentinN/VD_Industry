@@ -90,7 +90,7 @@ export function AppsGrid({ vintedStats, financesStats, investStats, fitnessStats
         >
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-emerald-400">4 apps en production</span>
+            <span className="text-xs text-emerald-400">5 apps en production</span>
           </div>
         </motion.div>
 
@@ -356,6 +356,74 @@ export function AppsGrid({ vintedStats, financesStats, investStats, fitnessStats
                   ].map((s) => (
                     <div key={s.label} className="rounded-xl border border-white/8 bg-white/3 p-4 text-center">
                       <s.icon className="w-4 h-4 text-orange-400 mx-auto mb-2" />
+                      <p className="text-lg font-black text-white tabular-nums">{s.value}</p>
+                      <p className="text-[11px] text-gray-600 mt-0.5 leading-tight">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Link>
+        </motion.div>
+
+        {/* PerfTrack — external live app */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mb-6"
+        >
+          <Link href="/app/perftrack" className="group block">
+            <div className="relative rounded-3xl border border-[#00FF87]/20 bg-gradient-to-br from-[#00FF87]/5 via-white/2 to-transparent p-8 hover:border-[#00FF87]/40 transition-all duration-300 hover:shadow-2xl hover:shadow-[#00FF87]/8 overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-[#00FF87]/5 blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#00FF87]/30 bg-[#00FF87]/10 text-[#00FF87] text-xs mb-6">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00FF87] animate-pulse" />
+                Live · Netlify · Collab
+              </div>
+
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
+                <div className="flex-1">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-14 h-14 rounded-2xl bg-[#00FF87]/10 border border-[#00FF87]/25 flex items-center justify-center group-hover:bg-[#00FF87]/20 transition-colors">
+                      <span className="text-2xl">⚽</span>
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">PerfTrack</h2>
+                      <p className="text-[#00FF87]/70 text-sm">Analytics football · Dashboard coach</p>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-400 leading-relaxed mb-5 max-w-lg">
+                    Dashboard analytics pour clubs de football amateurs — suivi de l&apos;effectif,
+                    live match avec événements en temps réel, rapports post-match, statistiques individuelles
+                    et analyse de saison. Développé en collaboration.
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {['React 19', 'Vite', 'Supabase', 'Zustand', 'Recharts', 'Tailwind'].map((tag) => (
+                      <span key={tag} className="px-2.5 py-1 rounded-full text-xs bg-[#00FF87]/8 text-[#00FF87] border border-[#00FF87]/20">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-2 text-[#00FF87] font-semibold text-sm group-hover:gap-3 transition-all duration-200">
+                    Voir l&apos;application
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-3 lg:w-72 flex-shrink-0">
+                  {[
+                    { icon: Users, label: 'Joueurs', value: '18' },
+                    { icon: BarChart3, label: 'Matchs suivis', value: '10+' },
+                    { icon: TrendingUp, label: 'Modules', value: '8' },
+                    { icon: Clock, label: 'Live match', value: 'Temps réel' },
+                  ].map((s) => (
+                    <div key={s.label} className="rounded-xl border border-white/8 bg-white/3 p-4 text-center">
+                      <s.icon className="w-4 h-4 text-[#00FF87] mx-auto mb-2" />
                       <p className="text-lg font-black text-white tabular-nums">{s.value}</p>
                       <p className="text-[11px] text-gray-600 mt-0.5 leading-tight">{s.label}</p>
                     </div>
