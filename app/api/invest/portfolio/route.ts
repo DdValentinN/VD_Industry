@@ -26,10 +26,32 @@ export async function GET(req: NextRequest) {
   const userId = getUserIdFromRequest(req) ?? 'valentin'
 
   try {
-    const etfs = await prisma.investETF.findMany({
+    let etfs = await prisma.investETF.findMany({
       where: { userId },
       include: { transactions: { orderBy: { date: 'asc' } } },
     })
+
+    // Auto-seed ETF definitions for new users (copy from valentin, no transactions)
+    if (etfs.length === 0 && userId !== 'valentin') {
+      const template = await prisma.investETF.findMany({ where: { userId: 'valentin' } })
+      if (template.length > 0) {
+        await prisma.investETF.createMany({
+          data: template.map(e => ({
+            isin:     e.isin,
+            nom:      e.nom,
+            nomCourt: e.nomCourt,
+            ticker:   e.ticker,
+            couleur:  e.couleur,
+            userId,
+          })),
+          skipDuplicates: true,
+        })
+        etfs = await prisma.investETF.findMany({
+          where: { userId },
+          include: { transactions: { orderBy: { date: 'asc' } } },
+        })
+      }
+    }
 
     const results = await Promise.all(
       etfs.map(async (etf) => {
