@@ -34,7 +34,7 @@ function MiniKPI({ label, value, sub, icon: Icon, color }: KPI) {
 }
 
 export default function VentesPage() {
-  const { isAdmin } = useAuth()
+  const { isLoggedIn } = useAuth()
   const [articles, setArticles] = useState<Article[]>([])
   const [parametres, setParametres] = useState<Parametre | null>(null)
   const [loading, setLoading] = useState(true)
@@ -98,7 +98,7 @@ export default function VentesPage() {
             {articles.length} articles au total · {stats.enStock} en stock · {stats.vendus} vendus
           </p>
         </div>
-        {isAdmin && (
+        {isLoggedIn && (
           <Button onClick={openAdd} className="w-full sm:w-auto shrink-0 bg-emerald-600 hover:bg-emerald-700">
             <Plus className="w-4 h-4 mr-2" />
             Ajouter un article
@@ -150,11 +150,11 @@ export default function VentesPage() {
         <ArticleTable
           articles={articles}
           parametres={parametres ?? { id: 1, seuilOrange: 2, margeCible: 0.3 }}
-          onEdit={isAdmin ? openEdit : undefined}
+          onEdit={isLoggedIn ? openEdit : undefined}
         />
       )}
 
-      {isAdmin && (
+      {isLoggedIn && (
         <ArticleModal
           open={modalOpen}
           onClose={() => { setModalOpen(false); setEditArticle(null) }}
