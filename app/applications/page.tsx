@@ -6,9 +6,9 @@ import { Footer } from '@/components/portfolio/Footer'
 async function getVintedStats() {
   try {
     const [total, vendus] = await Promise.all([
-      prisma.article.count(),
+      prisma.article.count({ where: { userId: 'valentin' } }),
       prisma.article.findMany({
-        where: { statut: 'Vendu', prixVente: { not: null } },
+        where: { userId: 'valentin', statut: 'Vendu', prixVente: { not: null } },
       }),
     ])
     const beneficeTotal = vendus.reduce(
