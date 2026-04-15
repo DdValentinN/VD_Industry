@@ -503,6 +503,41 @@ export default function InvestissementsPage() {
         ))}
       </div>
 
+      {/* Allocation breakdown */}
+      {portfolio.length > 0 && totaux.valeurTotale > 0 && (
+        <div className="rounded-xl border border-white/10 bg-[#111] p-5">
+          <p className="text-xs text-gray-500 uppercase tracking-wider mb-4">Répartition du portefeuille</p>
+          <div className="space-y-3">
+            {portfolio
+              .slice()
+              .sort((a, b) => b.valeurActuelle - a.valeurActuelle)
+              .map((etf) => {
+                const pct = totaux.valeurTotale > 0 ? (etf.valeurActuelle / totaux.valeurTotale) * 100 : 0
+                return (
+                  <div key={etf.id}>
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: etf.couleur }} />
+                        <span className="text-sm text-gray-300 font-medium">{etf.nomCourt}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm">
+                        <span className="text-gray-400 tabular-nums">{formatCurrency(etf.valeurActuelle)}</span>
+                        <span className="font-bold text-white tabular-nums w-12 text-right">{pct.toFixed(1)}%</span>
+                      </div>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-700"
+                        style={{ width: `${pct}%`, backgroundColor: etf.couleur }}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+          </div>
+        </div>
+      )}
+
       {/* ETF Cards */}
       <div className="grid md:grid-cols-3 gap-4">
         {portfolio.map((etf, i) => (
