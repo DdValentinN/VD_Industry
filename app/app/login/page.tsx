@@ -23,7 +23,7 @@ export default function LoginPage() {
     const result = await login(username, password)
     setLoading(false)
     if (result.success) {
-      router.push('/app/ventes')
+      router.push('/app')
     } else {
       setError(result.error ?? 'Identifiants incorrects')
     }
@@ -48,14 +48,14 @@ export default function LoginPage() {
             <TrendingUp className="w-6 h-6 text-emerald-400" />
           </div>
           <h1 className="text-xl font-bold text-white">VD Industry</h1>
-          <p className="text-gray-500 text-sm mt-1">Accès administrateur</p>
+          <p className="text-gray-500 text-sm mt-1">Connexion à votre espace</p>
         </div>
 
         {/* Card */}
         <div className="rounded-2xl border border-white/10 bg-white/3 p-6 backdrop-blur-sm">
           <div className="flex items-center gap-2 mb-6">
             <Lock className="w-4 h-4 text-emerald-400" />
-            <span className="text-sm font-medium text-white">Connexion</span>
+            <span className="text-sm font-medium text-white">Identifiants</span>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

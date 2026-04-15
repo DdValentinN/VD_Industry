@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { isAdminRequest } from '@/lib/auth'
+import { getUserIdFromRequest, isLoggedIn } from '@/lib/auth'
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const userId = getUserIdFromRequest(req)
+  if (!userId) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   try {
     const articles = await prisma.article.findMany({
+      where: { userId },
       orderBy: { createdAt: 'desc' },
     })
     return NextResponse.json({ data: articles })
@@ -15,7 +18,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  if (!isAdminRequest(req)) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+  const userId = getUserIdFromRequest(req)
+  if (!userId) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   try {
     const body = await req.json()
 
@@ -25,8 +29,9 @@ export async function POST(req: NextRequest) {
     const prixAchat = parseFloat(body.prixAchat)
     if (isNaN(prixAchat)) return NextResponse.json({ error: 'Prix d\'achat invalide' }, { status: 400 })
 
-    // Generate next articleId
+    // Generate next articleId per user (prefix with user initials for clarity)
     const last = await prisma.article.findFirst({
+      where: { userId },
       orderBy: { articleId: 'desc' },
       select: { articleId: true },
     })
@@ -48,6 +53,7 @@ export async function POST(req: NextRequest) {
         statut: body.statut ?? 'En stock',
         notes: body.notes?.trim() || null,
         imageUrl: body.imageUrl?.trim() || null,
+        userId,
       },
     })
 

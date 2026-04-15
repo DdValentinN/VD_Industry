@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { getUserIdFromRequest } from '@/lib/auth'
+import { searchTickerByISIN, getQuote } from '@/lib/yahoo'
 
 export const dynamic = 'force-dynamic'
-import { prisma } from '@/lib/prisma'
-import { searchTickerByISIN, getQuote } from '@/lib/yahoo'
 
 function computePosition(transactions: { type: string; quantite: number; prix: number }[]) {
   let quantite = 0
@@ -21,9 +22,13 @@ function computePosition(transactions: { type: string; quantite: number; prix: n
   return { quantite, prixMoyen, coutTotal }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const userId = getUserIdFromRequest(req)
+  if (!userId) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+
   try {
     const etfs = await prisma.investETF.findMany({
+      where: { userId },
       include: { transactions: { orderBy: { date: 'asc' } } },
     })
 
@@ -31,7 +36,6 @@ export async function GET() {
       etfs.map(async (etf) => {
         const pos = computePosition(etf.transactions)
 
-        // Auto-resolve ticker by ISIN if not set
         let ticker = etf.ticker
         if (!ticker) {
           const found = await searchTickerByISIN(etf.isin)

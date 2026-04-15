@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { isAdminRequest } from '@/lib/auth'
+import { getUserIdFromRequest } from '@/lib/auth'
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const userId = getUserIdFromRequest(req)
+  if (!userId) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+
   try {
     const transactions = await prisma.investTransaction.findMany({
+      where: { etf: { userId } },
       include: { etf: true },
       orderBy: { date: 'desc' },
     })
@@ -16,12 +20,19 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  if (!isAdminRequest(req)) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+  const userId = getUserIdFromRequest(req)
+  if (!userId) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+
   try {
     const body = await req.json()
 
     const etfId = parseInt(body.etfId)
     if (isNaN(etfId)) return NextResponse.json({ error: 'ETF invalide' }, { status: 400 })
+
+    // Verify the ETF belongs to this user
+    const etf = await prisma.investETF.findFirst({ where: { id: etfId, userId } })
+    if (!etf) return NextResponse.json({ error: 'ETF introuvable' }, { status: 404 })
+
     const quantite = parseFloat(body.quantite)
     if (isNaN(quantite) || quantite <= 0) return NextResponse.json({ error: 'Quantité invalide' }, { status: 400 })
     const prix = parseFloat(body.prix)

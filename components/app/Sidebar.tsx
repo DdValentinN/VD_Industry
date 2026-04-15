@@ -10,38 +10,35 @@ import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 
-const PUBLIC_NAV = [
-  { href: '/app', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/app/ventes', icon: ShoppingBag, label: 'Ventes' },
-  { href: '/app/finances', icon: Users, label: 'Plan Épargne 1.1' },
-  { href: '/app/investissements', icon: TrendingUp, label: 'Investissements' },
-  { href: '/app/fitness', icon: Flame, label: 'Fitness' },
-  { href: '/app/bot', icon: Bot, label: 'Bot Vinted' },
-  { href: '/app/perftrack', icon: Users, label: 'PerfTrack' },
+const ADMIN_NAV = [
+  { href: '/app',                 icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/app/ventes',          icon: ShoppingBag,     label: 'Ventes' },
+  { href: '/app/finances',        icon: Users,           label: 'Plan Épargne 1.1' },
+  { href: '/app/investissements', icon: TrendingUp,      label: 'Investissements' },
+  { href: '/app/fitness',         icon: Flame,           label: 'Fitness' },
+  { href: '/app/bot',             icon: Bot,             label: 'Bot Vinted' },
+  { href: '/app/perftrack',       icon: Users,           label: 'PerfTrack' },
+  { href: '/app/parametres',      icon: Settings,        label: 'Paramètres' },
 ]
 
-const ADMIN_NAV = [
-  { href: '/app', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/app/ventes', icon: ShoppingBag, label: 'Ventes' },
-  { href: '/app/finances', icon: Users, label: 'Plan Épargne 1.1' },
-  { href: '/app/investissements', icon: TrendingUp, label: 'Investissements' },
-  { href: '/app/fitness', icon: Flame, label: 'Fitness' },
-  { href: '/app/bot', icon: Bot, label: 'Bot Vinted' },
-  { href: '/app/perftrack', icon: Users, label: 'PerfTrack' },
-  { href: '/app/parametres', icon: Settings, label: 'Paramètres' },
+// loukasbrz and any future non-admin user: Dashboard + Ventes + Investissements only
+const USER_NAV = [
+  { href: '/app',                 icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/app/ventes',          icon: ShoppingBag,     label: 'Ventes' },
+  { href: '/app/investissements', icon: TrendingUp,      label: 'Investissements' },
 ]
 
 export function Sidebar() {
   const pathname = usePathname()
-  const router = useRouter()
+  const router   = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
-  const { isAdmin, loading, logout } = useAuth()
+  const { isAdmin, isLoggedIn, userId, loading, logout } = useAuth()
 
-  const navItems = isAdmin ? ADMIN_NAV : PUBLIC_NAV
+  const navItems = isAdmin ? ADMIN_NAV : USER_NAV
 
   async function handleLogout() {
     await logout()
-    router.push('/app')
+    router.push('/app/login')
     setMobileOpen(false)
   }
 
@@ -59,19 +56,22 @@ export function Sidebar() {
           </div>
         </div>
 
-        {/* Auth status badge */}
+        {/* Session badge */}
         {!loading && (
           <div className={cn(
             'mt-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium w-fit',
             isAdmin
               ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
-              : 'bg-white/5 border border-white/10 text-gray-600',
+              : isLoggedIn
+                ? 'bg-sky-500/10 border border-sky-500/20 text-sky-400'
+                : 'bg-white/5 border border-white/10 text-gray-600',
           )}>
-            {isAdmin ? (
-              <><Shield className="w-2.5 h-2.5" /> Admin</>
-            ) : (
-              <><Lock className="w-2.5 h-2.5" /> Vue publique</>
-            )}
+            {isAdmin
+              ? <><Shield className="w-2.5 h-2.5" /> Valentin</>
+              : isLoggedIn
+                ? <><Shield className="w-2.5 h-2.5" /> {userId}</>
+                : <><Lock className="w-2.5 h-2.5" /> Non connecté</>
+            }
           </div>
         )}
       </div>
@@ -97,19 +97,11 @@ export function Sidebar() {
             </Link>
           )
         })}
-
-        {/* Locked settings hint for public */}
-        {!isAdmin && !loading && (
-          <div className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-gray-700 cursor-not-allowed select-none">
-            <Lock className="w-4 h-4" />
-            Paramètres
-          </div>
-        )}
       </nav>
 
       {/* Footer */}
       <div className="p-4 border-t border-white/8 space-y-1">
-        {isAdmin ? (
+        {isLoggedIn ? (
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-red-400 hover:text-red-300 hover:bg-red-500/8 transition-colors"
@@ -124,7 +116,7 @@ export function Sidebar() {
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/8 transition-colors"
           >
             <LogIn className="w-4 h-4" />
-            Connexion admin
+            Se connecter
           </Link>
         )}
         <Link
@@ -147,14 +139,15 @@ export function Sidebar() {
           <TrendingUp className="w-4 h-4 text-emerald-500" />
           <span className="text-white font-bold text-sm">VD Industry</span>
           {isAdmin && <span className="text-[10px] text-emerald-400 ml-1">Admin</span>}
+          {isLoggedIn && !isAdmin && <span className="text-[10px] text-sky-400 ml-1">{userId}</span>}
         </div>
         <div className="flex items-center gap-2">
-          {!isAdmin && (
+          {!isLoggedIn && (
             <Link href="/app/login" className="text-xs text-emerald-400 px-2 py-1 rounded-lg border border-emerald-500/25 hover:bg-emerald-500/10 transition-colors">
               Login
             </Link>
           )}
-          {isAdmin && (
+          {isLoggedIn && (
             <button onClick={handleLogout} className="text-xs text-red-400 px-2 py-1 rounded-lg border border-red-500/25 hover:bg-red-500/10 transition-colors">
               Logout
             </button>

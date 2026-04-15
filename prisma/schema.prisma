@@ -19,6 +19,7 @@ model Article {
   statut      String   @default("En stock")
   notes       String?
   imageUrl    String?
+  userId      String   @default("valentin")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -60,12 +61,15 @@ model FinancesMois {
 
 model InvestETF {
   id           Int                @id @default(autoincrement())
-  isin         String             @unique
+  isin         String
   nom          String
   nomCourt     String
   ticker       String             @default("")
   couleur      String             @default("#10b981")
+  userId       String             @default("valentin")
   transactions InvestTransaction[]
+
+  @@unique([isin, userId])
 }
 
 model InvestTransaction {
@@ -81,14 +85,15 @@ model InvestTransaction {
 }
 
 model InvestPlan {
-  id            Int   @id @default(1)
-  montantS1     Float @default(100)
-  montantS2     Float @default(100)
-  montantS3     Float @default(100)
-  montantS4     Float @default(150)
-  partsEmergS4  Int   @default(2)
-  partsStorxxS4 Int   @default(2)
-  cycleWeek     Int   @default(1)
+  id            Int    @id @default(autoincrement())
+  userId        String @unique @default("valentin")
+  montantS1     Float  @default(100)
+  montantS2     Float  @default(100)
+  montantS3     Float  @default(100)
+  montantS4     Float  @default(150)
+  partsEmergS4  Int    @default(2)
+  partsStorxxS4 Int    @default(2)
+  cycleWeek     Int    @default(1)
 }
 
 // ── Fitness ──────────────────────────────────────────────────────────────────
