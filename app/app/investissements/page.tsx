@@ -653,13 +653,41 @@ function TransactionsTab({ transactions, isAdmin, onDelete }: { transactions: In
 // ─── Plan DCA Tab ─────────────────────────────────────────────────────────────
 
 function PlanTab({
-  plan, portfolio, isAdmin, onAdvanceWeek,
+  plan, portfolio, isLoggedIn, onAdvanceWeek, onUpdatePlan,
 }: {
   plan: InvestPlan | null
   portfolio: PortfolioETF[]
-  isAdmin: boolean
+  isLoggedIn: boolean
   onAdvanceWeek: () => void
+  onUpdatePlan: (data: Partial<InvestPlan>) => Promise<void>
 }) {
+  const [editing, setEditing] = useState(false)
+  const [saving, setSaving]   = useState(false)
+  const [form, setForm]       = useState<Partial<InvestPlan>>({})
+
+  function openEdit() {
+    if (!plan) return
+    setForm({
+      montantS1: plan.montantS1,
+      montantS2: plan.montantS2,
+      montantS3: plan.montantS3,
+      montantS4: plan.montantS4,
+      partsEmergS4: plan.partsEmergS4,
+      partsStorxxS4: plan.partsStorxxS4,
+    })
+    setEditing(true)
+  }
+
+  async function saveEdit() {
+    setSaving(true)
+    try {
+      await onUpdatePlan({ ...plan, ...form })
+      setEditing(false)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   if (!plan) return (
     <div className="flex flex-col items-center justify-center py-20 gap-3 text-gray-600">
       <Target className="w-10 h-10 opacity-30" />
@@ -713,13 +741,21 @@ function PlanTab({
             <span className="text-xs text-emerald-400 border border-emerald-500/30 bg-emerald-500/8 px-3 py-1.5 rounded-full font-semibold">
               Semaine {current} / 4
             </span>
-            {isAdmin && (
-              <button
-                onClick={onAdvanceWeek}
-                className="text-xs text-sky-400 border border-sky-500/30 px-3 py-1.5 rounded-full hover:bg-sky-500/10 transition-colors"
-              >
-                Suivante →
-              </button>
+            {isLoggedIn && (
+              <>
+                <button
+                  onClick={onAdvanceWeek}
+                  className="text-xs text-sky-400 border border-sky-500/30 px-3 py-1.5 rounded-full hover:bg-sky-500/10 transition-colors"
+                >
+                  Suivante →
+                </button>
+                <button
+                  onClick={openEdit}
+                  className="text-xs text-gray-400 border border-white/10 px-3 py-1.5 rounded-full hover:bg-white/5 transition-colors"
+                >
+                  Modifier
+                </button>
+              </>
             )}
           </div>
         </div>
@@ -804,6 +840,73 @@ function PlanTab({
           ))}
         </div>
       </div>
+
+      {/* Edit plan modal */}
+      {editing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
+          <div className="w-full max-w-sm rounded-2xl bg-[#111] border border-white/10 p-6 space-y-4">
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-white font-bold">Modifier le plan DCA</p>
+              <button onClick={() => setEditing(false)} className="text-gray-500 hover:text-white text-xl leading-none">×</button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {([
+                { key: 'montantS1', label: 'Semaine 1 (€)' },
+                { key: 'montantS2', label: 'Semaine 2 (€)' },
+                { key: 'montantS3', label: 'Semaine 3 (€)' },
+                { key: 'montantS4', label: 'Semaine 4 (€)' },
+              ] as { key: keyof InvestPlan; label: string }[]).map(({ key, label }) => (
+                <div key={key}>
+                  <label className="text-xs text-gray-500 mb-1 block">{label}</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={form[key] as number ?? 0}
+                    onChange={e => setForm(f => ({ ...f, [key]: parseFloat(e.target.value) || 0 }))}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500/50"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {([
+                { key: 'partsEmergS4', label: 'Parts Émergents (S4)' },
+                { key: 'partsStorxxS4', label: 'Parts STOXX 600 (S4)' },
+              ] as { key: keyof InvestPlan; label: string }[]).map(({ key, label }) => (
+                <div key={key}>
+                  <label className="text-xs text-gray-500 mb-1 block">{label}</label>
+                  <input
+                    type="number"
+                    min={0}
+                    step={1}
+                    value={form[key] as number ?? 0}
+                    onChange={e => setForm(f => ({ ...f, [key]: parseInt(e.target.value) || 0 }))}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500/50"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-2 pt-1">
+              <button
+                onClick={() => setEditing(false)}
+                className="flex-1 py-2 rounded-xl border border-white/10 text-gray-400 text-sm hover:bg-white/5 transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={saveEdit}
+                disabled={saving}
+                className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-colors disabled:opacity-50"
+              >
+                {saving ? 'Sauvegarde...' : 'Enregistrer'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -898,6 +1001,23 @@ export default function InvestissementsPage() {
     } catch { toast.error('Erreur') }
   }
 
+  async function updatePlan(data: Partial<InvestPlan>) {
+    try {
+      const res = await fetch('/api/invest/plan', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...plan, ...data }),
+      })
+      const json = await res.json()
+      if (json.data) {
+        setPlan(json.data)
+        toast.success('Plan DCA mis à jour')
+      } else {
+        toast.error(json.error ?? 'Erreur')
+      }
+    } catch { toast.error('Erreur') }
+  }
+
   const totaux: Totaux = useMemo(() => {
     const valeurTotale = portfolio.reduce((s, e) => s + e.valeurActuelle, 0)
     const investi      = portfolio.reduce((s, e) => s + e.valeurInvestie, 0)
@@ -984,7 +1104,7 @@ export default function InvestissementsPage() {
         />
       )}
       {tab === 'transactions' && <TransactionsTab transactions={transactions} isAdmin={isAdmin} onDelete={deleteTx} />}
-      {tab === 'plan' && <PlanTab plan={plan} portfolio={portfolio} isAdmin={isAdmin} onAdvanceWeek={advanceCycleWeek} />}
+      {tab === 'plan' && <PlanTab plan={plan} portfolio={portfolio} isLoggedIn={isLoggedIn} onAdvanceWeek={advanceCycleWeek} onUpdatePlan={updatePlan} />}
 
       {/* Transaction modal */}
       <TxModal open={txModal} onClose={() => setTxModal(false)} etfs={portfolio} onSuccess={() => fetchPortfolio(true)} />
