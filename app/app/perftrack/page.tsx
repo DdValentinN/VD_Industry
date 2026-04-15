@@ -79,7 +79,7 @@ export default function PerfTrackPage() {
                   src="/perftrack-preview.png"
                   alt="PerfTrack Dashboard Preview"
                   fill
-                  className="object-cover object-top"
+                  className="object-contain"
                   onError={() => setImgError(true)}
                 />
               ) : (
