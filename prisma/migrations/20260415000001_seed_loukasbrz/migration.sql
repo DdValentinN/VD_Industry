@@ -19,7 +19,7 @@ SELECT setval(
 INSERT INTO "InvestETF" (isin, nom, "nomCourt", ticker, couleur, "userId")
 VALUES
   ('FR001400U5Q4', 'MSCI World PEA', 'MSCI World', '', '#10b981', 'loukasbrz'),
-  ('FR006174348',  'PEA Emergents Monde', 'PEA Emergents', '', '#a78bfa', 'loukasbrz');
+  ('FR0006174348', 'PEA Emergents Monde', 'PEA Emergents', '', '#a78bfa', 'loukasbrz');
 
 -- 4. Re-sync InvestTransaction sequence to avoid duplicate key errors
 SELECT setval(
@@ -37,7 +37,7 @@ WHERE "userId" = 'loukasbrz' AND isin = 'FR001400U5Q4';
 INSERT INTO "InvestTransaction" ("etfId", type, quantite, prix, date, notes)
 SELECT id, 'achat', 1, 30.00, '2026-01-01 00:00:00'::timestamp, 'Position initiale'
 FROM "InvestETF"
-WHERE "userId" = 'loukasbrz' AND isin = 'FR006174348';
+WHERE "userId" = 'loukasbrz' AND isin = 'FR0006174348';
 
 -- 6. Ensure loukasbrz has a Plan DCA
 SELECT setval(

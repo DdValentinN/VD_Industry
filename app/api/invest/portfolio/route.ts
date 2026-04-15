@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
       const USER_ETFS: Record<string, { isin: string; nom: string; nomCourt: string; couleur: string; quantite: number; prix: number }[]> = {
         loukasbrz: [
           { isin: 'FR001400U5Q4', nom: 'MSCI World PEA', nomCourt: 'MSCI World',    couleur: '#10b981', quantite: 5, prix: 45 },
-          { isin: 'FR006174348',  nom: 'PEA Emergents Monde', nomCourt: 'PEA Emergents', couleur: '#a78bfa', quantite: 1, prix: 30 },
+          { isin: 'FR0006174348', nom: 'PEA Emergents Monde', nomCourt: 'PEA Emergents', couleur: '#a78bfa', quantite: 1, prix: 30 },
         ],
       }
 

@@ -569,7 +569,7 @@ function PositionsTab({
 
 // ─── Transactions Tab ─────────────────────────────────────────────────────────
 
-function TransactionsTab({ transactions, isAdmin, onDelete }: { transactions: InvestTransaction[]; isAdmin: boolean; onDelete: (id: number) => void }) {
+function TransactionsTab({ transactions, isLoggedIn, onDelete }: { transactions: InvestTransaction[]; isLoggedIn: boolean; onDelete: (id: number) => void }) {
   const stats = useMemo(() => {
     const achats = transactions.filter(t => t.type === 'achat')
     const ventes = transactions.filter(t => t.type === 'vente')
@@ -615,7 +615,7 @@ function TransactionsTab({ transactions, isAdmin, onDelete }: { transactions: In
                   <th className="px-5 py-3 text-right text-gray-500 font-medium">Prix unit.</th>
                   <th className="px-5 py-3 text-right text-gray-500 font-medium">Total</th>
                   <th className="px-5 py-3 text-left text-gray-500 font-medium">Notes</th>
-                  {isAdmin && <th className="px-5 py-3" />}
+                  {isLoggedIn && <th className="px-5 py-3" />}
                 </tr>
               </thead>
               <tbody>
@@ -632,7 +632,7 @@ function TransactionsTab({ transactions, isAdmin, onDelete }: { transactions: In
                     <td className="px-5 py-3 text-right text-gray-300 tabular-nums">{formatCurrency(tx.prix)}</td>
                     <td className="px-5 py-3 text-right font-bold text-white tabular-nums">{formatCurrency(tx.quantite * tx.prix)}</td>
                     <td className="px-5 py-3 text-gray-600 max-w-[120px] truncate">{tx.notes ?? '—'}</td>
-                    {isAdmin && (
+                    {isLoggedIn && (
                       <td className="px-5 py-3 text-center">
                         <button onClick={() => onDelete(tx.id)} className="text-gray-700 hover:text-red-400 transition-colors">
                           <Trash2 className="w-3.5 h-3.5" />
@@ -1103,7 +1103,7 @@ export default function InvestissementsPage() {
           histLoading={histLoading}
         />
       )}
-      {tab === 'transactions' && <TransactionsTab transactions={transactions} isAdmin={isAdmin} onDelete={deleteTx} />}
+      {tab === 'transactions' && <TransactionsTab transactions={transactions} isLoggedIn={isLoggedIn} onDelete={deleteTx} />}
       {tab === 'plan' && <PlanTab plan={plan} portfolio={portfolio} isLoggedIn={isLoggedIn} onAdvanceWeek={advanceCycleWeek} onUpdatePlan={updatePlan} />}
 
       {/* Transaction modal */}
