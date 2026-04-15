@@ -3,8 +3,8 @@ import { prisma } from '@/lib/prisma'
 import { getUserIdFromRequest, isLoggedIn } from '@/lib/auth'
 
 export async function GET(req: NextRequest) {
-  const userId = getUserIdFromRequest(req)
-  if (!userId) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+  // No session → show Valentin's public data by default
+  const userId = getUserIdFromRequest(req) ?? 'valentin'
   try {
     const articles = await prisma.article.findMany({
       where: { userId },
