@@ -13,7 +13,7 @@ import { useAuth } from '@/context/AuthContext'
 const PUBLIC_NAV = [
   { href: '/app', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/app/ventes', icon: ShoppingBag, label: 'Ventes' },
-  { href: '/app/finances', icon: Users, label: 'Finances Couple' },
+  { href: '/app/finances', icon: Users, label: 'Plan Épargne 1.1' },
   { href: '/app/investissements', icon: TrendingUp, label: 'Investissements' },
   { href: '/app/fitness', icon: Flame, label: 'Fitness' },
   { href: '/app/bot', icon: Bot, label: 'Bot Vinted' },
@@ -22,7 +22,7 @@ const PUBLIC_NAV = [
 const ADMIN_NAV = [
   { href: '/app', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/app/ventes', icon: ShoppingBag, label: 'Ventes' },
-  { href: '/app/finances', icon: Users, label: 'Finances Couple' },
+  { href: '/app/finances', icon: Users, label: 'Plan Épargne 1.1' },
   { href: '/app/investissements', icon: TrendingUp, label: 'Investissements' },
   { href: '/app/fitness', icon: Flame, label: 'Fitness' },
   { href: '/app/bot', icon: Bot, label: 'Bot Vinted' },

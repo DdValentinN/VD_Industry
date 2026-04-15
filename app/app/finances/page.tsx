@@ -528,7 +528,7 @@ export default function FinancesPage() {
             <Users className="w-5 h-5 text-sky-400" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">Finances Couple</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">Plan Épargne 1.1</h1>
             <p className="text-gray-400 mt-0.5 text-sm">{params.nom1} &amp; {params.nom2} · Suivi budgétaire</p>
           </div>
         </div>

@@ -110,17 +110,55 @@ export function FinancesRevenusChart({ data }: { data: FinancesBarPoint[] }) {
 
 interface ChargePiePoint { nom: string; montant: number }
 export function FinancesChargesPie({ data }: { data: ChargePiePoint[] }) {
-  const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316']
+  // High-contrast palette — maximally distinct colors
+  const COLORS = [
+    '#f97316', // orange vif
+    '#3b82f6', // bleu
+    '#f43f5e', // rose-rouge
+    '#22d3ee', // cyan
+    '#a3e635', // vert lime
+    '#a78bfa', // violet
+    '#fbbf24', // jaune
+    '#34d399', // émeraude
+    '#fb7185', // rose clair
+    '#818cf8', // indigo
+  ]
+  const total = data.reduce((s, d) => s + d.montant, 0)
   return (
-    <ResponsiveContainer width="100%" height={250}>
+    <ResponsiveContainer width="100%" height={280}>
       <PieChart>
-        <Pie data={data} dataKey="montant" nameKey="nom" cx="50%" cy="45%" outerRadius={70} innerRadius={35} strokeWidth={2} stroke="#0a0a0a">
+        <Pie
+          data={data}
+          dataKey="montant"
+          nameKey="nom"
+          cx="50%"
+          cy="46%"
+          outerRadius={90}
+          innerRadius={50}
+          strokeWidth={3}
+          stroke="#0d0d0d"
+          paddingAngle={2}
+        >
           {data.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
         </Pie>
-        <Legend formatter={(v: string) => <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11 }}>{v}</span>} />
+        <Legend
+          iconType="circle"
+          iconSize={8}
+          formatter={(v: string, entry: any) => (
+            <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 11 }}>
+              {v}{' '}
+              <span style={{ color: 'rgba(255,255,255,0.35)' }}>
+                ({total > 0 ? ((entry.payload.montant / total) * 100).toFixed(0) : 0}%)
+              </span>
+            </span>
+          )}
+        />
         <Tooltip
-          contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: 12 }}
-          formatter={(v: number, name: string) => [`${v.toFixed(2)} €/mois`, name]}
+          contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#fff', fontSize: 12 }}
+          formatter={(v: number, name: string) => [
+            <span><strong>{v.toFixed(2)} €/mois</strong> · {total > 0 ? ((v / total) * 100).toFixed(1) : 0}%</span>,
+            name,
+          ]}
         />
       </PieChart>
     </ResponsiveContainer>
