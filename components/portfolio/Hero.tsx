@@ -194,12 +194,12 @@ export function Hero() {
               {/* Glow */}
               <div className="absolute -inset-3 rounded-3xl bg-emerald-500/10 blur-2xl" />
               {/* Photo */}
-              <div className="relative w-72 h-[22rem] md:w-80 md:h-[28rem] lg:w-96 lg:h-[32rem] rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+              <div className="relative w-64 h-80 md:w-72 md:h-96 lg:w-80 lg:h-[26rem] rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
                 <Image
                   src="/me.jpg"
                   alt="Valentin Delattre"
                   fill
-                  className="object-cover object-center"
+                  className="object-cover object-top"
                   priority
                   onError={() => {}}
                 />
