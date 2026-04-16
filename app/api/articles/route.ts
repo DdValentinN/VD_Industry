@@ -29,19 +29,18 @@ export async function POST(req: NextRequest) {
     const prixAchat = parseFloat(body.prixAchat)
     if (isNaN(prixAchat)) return NextResponse.json({ error: 'Prix d\'achat invalide' }, { status: 400 })
 
-    // Generate next articleId per user
+    // Generate next articleId per user — use MAX to avoid gaps/race issues
     // valentin → A-001, A-002 …  |  axelbg → Z-001, Z-002 …  |  others → 1, 2, 3 …
-    const last = await prisma.article.findFirst({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-      select: { articleId: true },
-    })
-    const lastNum = last ? parseInt(last.articleId.replace(/\D/g, ''), 10) || 0 : 0
+    const existing = await prisma.article.findMany({ where: { userId }, select: { articleId: true } })
+    const maxNum = existing.reduce((max, a) => {
+      const n = parseInt(a.articleId.replace(/\D/g, ''), 10) || 0
+      return Math.max(max, n)
+    }, 0)
     const articleId = userId === 'valentin'
-      ? `A-${String(lastNum + 1).padStart(3, '0')}`
+      ? `A-${String(maxNum + 1).padStart(3, '0')}`
       : userId === 'axelbg'
-        ? `Z-${String(lastNum + 1).padStart(3, '0')}`
-        : String(lastNum + 1)
+        ? `Z-${String(maxNum + 1).padStart(3, '0')}`
+        : String(maxNum + 1)
 
     const fraisDivers = parseFloat(body.fraisDivers)
     const prixVente = body.prixVente !== undefined && body.prixVente !== '' ? parseFloat(body.prixVente) : null
