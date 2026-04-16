@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { Edit2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn, formatCurrency, formatPercent } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import type { Article, Parametre } from '@/types'
@@ -14,9 +14,10 @@ interface ArticleTableProps {
   articles: Article[]
   parametres: Parametre
   onEdit?: (article: Article) => void
+  onDelete?: (article: Article) => void
 }
 
-export function ArticleTable({ articles, parametres, onEdit }: ArticleTableProps) {
+export function ArticleTable({ articles, parametres, onEdit, onDelete }: ArticleTableProps) {
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(50)
   const [filterStatut, setFilterStatut] = useState('')
@@ -144,7 +145,7 @@ export function ArticleTable({ articles, parametres, onEdit }: ArticleTableProps
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-white/3 border-b border-white/10">
-                {['ID', 'Photo', 'Article', 'Catégorie', 'Date achat', 'Pr. achat', 'Frais', 'Pr. vente', 'Bénéfice', 'Marge', 'Statut', ...(onEdit ? ['Actions'] : [])].map(
+                {['ID', 'Photo', 'Article', 'Catégorie', 'Date achat', 'Pr. achat', 'Frais', 'Pr. vente', 'Bénéfice', 'Marge', 'Statut', ...(onEdit || onDelete ? ['Actions'] : [])].map(
                   (h) => (
                     <th
                       key={h}
@@ -166,7 +167,7 @@ export function ArticleTable({ articles, parametres, onEdit }: ArticleTableProps
             <tbody>
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={onEdit ? 12 : 11} className="px-4 py-12 text-center text-gray-500">
+                  <td colSpan={onEdit || onDelete ? 12 : 11} className="px-4 py-12 text-center text-gray-500">
                     Aucun article trouvé
                   </td>
                 </tr>
@@ -250,15 +251,28 @@ export function ArticleTable({ articles, parametres, onEdit }: ArticleTableProps
                           {article.statut}
                         </Badge>
                       </td>
-                      {onEdit && (
+                      {(onEdit || onDelete) && (
                         <td className="px-4 py-3 text-center">
-                          <button
-                            onClick={() => onEdit(article)}
-                            className="p-1.5 rounded-lg hover:bg-white/10 text-gray-500 hover:text-white transition-colors"
-                            title="Modifier"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
+                          <div className="flex items-center justify-center gap-1">
+                            {onEdit && (
+                              <button
+                                onClick={() => onEdit(article)}
+                                className="p-1.5 rounded-lg hover:bg-white/10 text-gray-500 hover:text-white transition-colors"
+                                title="Modifier"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                            )}
+                            {onDelete && (
+                              <button
+                                onClick={() => onDelete(article)}
+                                className="p-1.5 rounded-lg hover:bg-red-500/15 text-gray-500 hover:text-red-400 transition-colors"
+                                title="Supprimer"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
                         </td>
                       )}
                     </tr>

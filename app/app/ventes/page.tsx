@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
+import { toast } from 'sonner'
 import { Plus, ShoppingBag, Package, TrendingUp, Wallet, BarChart3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ArticleTable } from '@/components/app/ArticleTable'
@@ -63,6 +64,18 @@ export default function VentesPage() {
 
   function openAdd() { setEditArticle(null); setModalOpen(true) }
   function openEdit(article: Article) { setEditArticle(article); setModalOpen(true) }
+
+  async function handleDelete(article: Article) {
+    if (!confirm(`Supprimer "${article.nom}" ? Cette action est irréversible.`)) return
+    try {
+      const res = await fetch(`/api/articles/${article.id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Suppression échouée')
+      toast.success('Article supprimé')
+      fetchData()
+    } catch {
+      toast.error('Erreur lors de la suppression')
+    }
+  }
 
   const stats = useMemo(() => {
     const enStock = articles.filter((a) => a.statut === 'En stock')
@@ -151,6 +164,7 @@ export default function VentesPage() {
           articles={articles}
           parametres={parametres ?? { id: 1, seuilOrange: 2, margeCible: 0.3 }}
           onEdit={isLoggedIn ? openEdit : undefined}
+          onDelete={isLoggedIn ? handleDelete : undefined}
         />
       )}
 
