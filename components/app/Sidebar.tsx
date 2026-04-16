@@ -21,11 +21,17 @@ const ADMIN_NAV = [
   { href: '/app/parametres',      icon: Settings,        label: 'Paramètres' },
 ]
 
-// loukasbrz and any future non-admin user: Dashboard + Ventes + Investissements only
+// loukasbrz: Dashboard + Ventes + Investissements
 const USER_NAV = [
   { href: '/app',                 icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/app/ventes',          icon: ShoppingBag,     label: 'Ventes' },
   { href: '/app/investissements', icon: TrendingUp,      label: 'Investissements' },
+]
+
+// axelbg (and future ventes-only users): Dashboard + Ventes only
+const VENTES_ONLY_NAV = [
+  { href: '/app',        icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/app/ventes', icon: ShoppingBag,     label: 'Ventes' },
 ]
 
 export function Sidebar() {
@@ -34,7 +40,7 @@ export function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const { isAdmin, isLoggedIn, userId, loading, logout } = useAuth()
 
-  const navItems = isAdmin ? ADMIN_NAV : USER_NAV
+  const navItems = isAdmin ? ADMIN_NAV : userId === 'axelbg' ? VENTES_ONLY_NAV : USER_NAV
 
   async function handleLogout() {
     await logout()
