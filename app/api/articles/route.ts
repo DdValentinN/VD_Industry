@@ -65,6 +65,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ data: article }, { status: 201 })
   } catch (err) {
     console.error(err)
-    return NextResponse.json({ error: 'Erreur lors de la création' }, { status: 500 })
+    return NextResponse.json({ error: err instanceof Error ? err.message : 'Erreur lors de la création' }, { status: 500 })
   }
 }
