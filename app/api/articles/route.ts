@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     if (isNaN(prixAchat)) return NextResponse.json({ error: 'Prix d\'achat invalide' }, { status: 400 })
 
     // Generate next articleId per user
-    // valentin → A-001, A-002 …  |  other users → 1, 2, 3 …
+    // valentin → A-001, A-002 …  |  axelbg → Z-001, Z-002 …  |  others → 1, 2, 3 …
     const last = await prisma.article.findFirst({
       where: { userId },
       orderBy: { createdAt: 'desc' },
@@ -39,7 +39,9 @@ export async function POST(req: NextRequest) {
     const lastNum = last ? parseInt(last.articleId.replace(/\D/g, ''), 10) || 0 : 0
     const articleId = userId === 'valentin'
       ? `A-${String(lastNum + 1).padStart(3, '0')}`
-      : String(lastNum + 1)
+      : userId === 'axelbg'
+        ? `Z-${String(lastNum + 1).padStart(3, '0')}`
+        : String(lastNum + 1)
 
     const fraisDivers = parseFloat(body.fraisDivers)
     const prixVente = body.prixVente !== undefined && body.prixVente !== '' ? parseFloat(body.prixVente) : null
