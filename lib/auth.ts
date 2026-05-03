@@ -8,7 +8,7 @@ const SECRET = process.env.SESSION_SECRET ?? 'vd-fallback-secret'
 // ─── User definitions ─────────────────────────────────────────────────────────
 // userId is the key used for DB scoping — keep it stable regardless of username
 
-export type UserId = 'valentin' | 'loukasbrz' | 'axelbg'
+export type UserId = 'valentin' | 'axelbg'
 export type UserRole = 'admin' | 'user'
 
 interface UserDef {
@@ -24,12 +24,6 @@ const USERS: UserDef[] = [
     username: process.env.ADMIN_USERNAME ?? 'valentin',
     password: process.env.ADMIN_PASSWORD ?? '',
     role:     'admin',
-  },
-  {
-    userId:   'loukasbrz',
-    username: 'loukasbrz',
-    password: process.env.LOUKAS_PASSWORD ?? '1234',
-    role:     'user',
   },
   {
     userId:   'axelbg',
