@@ -35,34 +35,34 @@ interface StandingRow {
 
 const PLAYERS = [
   // Gardiens
-  { name: 'David Raya',           pos: 'GK',  num: 1,  nat: '🇪🇸', age: 30 },
-  { name: 'Kepa Arrizabalaga',    pos: 'GK',  num: 13, nat: '🇪🇸', age: 31 },
-  { name: 'Tommy Setford',        pos: 'GK',  num: 35, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 20 },
+  { name: 'David Raya',           pos: 'GK',  num: 1,  nat: '🇪🇸', age: 30, photo: 'raya' },
+  { name: 'Kepa Arrizabalaga',    pos: 'GK',  num: 13, nat: '🇪🇸', age: 31, photo: 'kepa' },
+  { name: 'Tommy Setford',        pos: 'GK',  num: 35, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 20, photo: 'setford' },
   // Défenseurs
-  { name: 'William Saliba',       pos: 'DEF', num: 2,  nat: '🇫🇷', age: 25 },
-  { name: 'Gabriel Magalhães',    pos: 'DEF', num: 6,  nat: '🇧🇷', age: 28 },
-  { name: 'Piero Hincapié',       pos: 'DEF', num: 5,  nat: '🇪🇨', age: 24 },
-  { name: 'Cristhian Mosquera',   pos: 'DEF', num: 3,  nat: '🇨🇴', age: 21 },
-  { name: 'Riccardo Calafiori',   pos: 'DEF', num: 33, nat: '🇮🇹', age: 23 },
-  { name: 'Myles Lewis-Skelly',   pos: 'DEF', num: 49, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 19 },
-  { name: 'Jurriën Timber',       pos: 'DEF', num: 12, nat: '🇳🇱', age: 24 },
-  { name: 'Ben White',            pos: 'DEF', num: 4,  nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 28 },
+  { name: 'William Saliba',       pos: 'DEF', num: 2,  nat: '🇫🇷', age: 25, photo: 'saliba' },
+  { name: 'Gabriel Magalhães',    pos: 'DEF', num: 6,  nat: '🇧🇷', age: 28, photo: 'gabriel' },
+  { name: 'Piero Hincapié',       pos: 'DEF', num: 5,  nat: '🇪🇨', age: 24, photo: 'hincapie' },
+  { name: 'Cristhian Mosquera',   pos: 'DEF', num: 3,  nat: '🇨🇴', age: 21, photo: 'mosquera' },
+  { name: 'Riccardo Calafiori',   pos: 'DEF', num: 33, nat: '🇮🇹', age: 23, photo: 'calafiori' },
+  { name: 'Myles Lewis-Skelly',   pos: 'DEF', num: 49, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 19, photo: 'lewis-skelly' },
+  { name: 'Jurriën Timber',       pos: 'DEF', num: 12, nat: '🇳🇱', age: 24, photo: 'timber' },
+  { name: 'Ben White',            pos: 'DEF', num: 4,  nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 28, photo: 'white' },
   // Milieux
-  { name: 'Martín Zubimendi',     pos: 'MID', num: 36, nat: '🇪🇸', age: 27 },
-  { name: 'Christian Nørgaard',   pos: 'MID', num: 16, nat: '🇩🇰', age: 32 },
-  { name: 'Declan Rice',          pos: 'MID', num: 41, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 27 },
-  { name: 'Mikel Merino',         pos: 'MID', num: 23, nat: '🇪🇸', age: 29 },
-  { name: 'Martin Ødegaard',      pos: 'MID', num: 8,  nat: '🇳🇴', age: 27, captain: true },
-  { name: 'Eberechi Eze',         pos: 'MID', num: 10, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 27 },
+  { name: 'Martín Zubimendi',     pos: 'MID', num: 36, nat: '🇪🇸', age: 27, photo: 'zubimendi' },
+  { name: 'Christian Nørgaard',   pos: 'MID', num: 16, nat: '🇩🇰', age: 32, photo: 'norgaard' },
+  { name: 'Declan Rice',          pos: 'MID', num: 41, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 27, photo: 'rice' },
+  { name: 'Mikel Merino',         pos: 'MID', num: 23, nat: '🇪🇸', age: 29, photo: 'merino' },
+  { name: 'Martin Ødegaard',      pos: 'MID', num: 8,  nat: '🇳🇴', age: 27, captain: true, photo: 'odegaard' },
+  { name: 'Eberechi Eze',         pos: 'MID', num: 10, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 27, photo: 'eze' },
   // Attaquants
-  { name: 'Gabriel Martinelli',   pos: 'ATT', num: 11, nat: '🇧🇷', age: 24 },
-  { name: 'Leandro Trossard',     pos: 'ATT', num: 19, nat: '🇧🇪', age: 31 },
-  { name: 'Bukayo Saka',          pos: 'ATT', num: 7,  nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 24 },
-  { name: 'Noni Madueke',         pos: 'ATT', num: 20, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 24 },
-  { name: 'Viktor Gyökeres',      pos: 'ATT', num: 14, nat: '🇸🇪', age: 27 },
-  { name: 'Kai Havertz',          pos: 'ATT', num: 29, nat: '🇩🇪', age: 26 },
-  { name: 'Gabriel Jesus',        pos: 'ATT', num: 9,  nat: '🇧🇷', age: 29 },
-  { name: 'Max Dowman',           pos: 'ATT', num: 56, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 16 },
+  { name: 'Gabriel Martinelli',   pos: 'ATT', num: 11, nat: '🇧🇷', age: 24, photo: 'martinelli' },
+  { name: 'Leandro Trossard',     pos: 'ATT', num: 19, nat: '🇧🇪', age: 31, photo: 'trossard' },
+  { name: 'Bukayo Saka',          pos: 'ATT', num: 7,  nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 24, photo: 'saka' },
+  { name: 'Noni Madueke',         pos: 'ATT', num: 20, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 24, photo: 'madueke' },
+  { name: 'Viktor Gyökeres',      pos: 'ATT', num: 14, nat: '🇸🇪', age: 27, photo: 'gyokeres' },
+  { name: 'Kai Havertz',          pos: 'ATT', num: 29, nat: '🇩🇪', age: 26, photo: 'havertz' },
+  { name: 'Gabriel Jesus',        pos: 'ATT', num: 9,  nat: '🇧🇷', age: 29, photo: 'jesus' },
+  { name: 'Max Dowman',           pos: 'ATT', num: 56, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 16, photo: 'dowman' },
 ]
 
 const HISTORY = [
@@ -533,20 +533,31 @@ export default function ArsenalPage() {
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {posPlayers.map(p => (
                       <div key={p.name} className="rounded-2xl border border-white/10 bg-white/3 hover:border-[#EF0107]/30 hover:bg-[#EF0107]/5 transition-all p-4">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-3xl font-black text-[#EF0107]/30">#{p.num}</span>
-                            </div>
-                            <p className="text-white font-bold">{p.name}</p>
+                        <div className="flex items-start gap-3 mb-3">
+                          {/* Photo ou fallback emoji */}
+                          <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10 flex-shrink-0 bg-[#EF0107]/10 flex items-center justify-center">
+                            <img
+                              src={`/arsenal/players/${p.photo}.jpg`}
+                              alt={p.name}
+                              className="w-full h-full object-cover object-top"
+                              onError={(e) => {
+                                const t = e.target as HTMLImageElement
+                                t.style.display = 'none'
+                                t.nextElementSibling?.classList.remove('hidden')
+                              }}
+                            />
+                            <span className="hidden text-2xl">
+                              {pos === 'GK' ? '🧤' : pos === 'DEF' ? '🛡️' : pos === 'MID' ? '⚙️' : '⚡'}
+                            </span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <span className="text-xs font-black text-[#EF0107]/50">#{p.num}</span>
+                            <p className="text-white font-bold leading-tight">{p.name}</p>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-lg">{p.nat}</span>
+                              <span className="text-base">{p.nat}</span>
                               <span className={`text-[10px] px-2 py-0.5 rounded-full border font-semibold ${POS_COLOR[p.pos]}`}>{p.pos}</span>
                               {p.captain && <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold">C</span>}
                             </div>
-                          </div>
-                          <div className="text-5xl opacity-20">
-                            {pos === 'GK' ? '🧤' : pos === 'DEF' ? '🛡️' : pos === 'MID' ? '⚙️' : '⚡'}
                           </div>
                         </div>
                         <div className="flex gap-4 text-center border-t border-white/5 pt-3">
