@@ -537,7 +537,7 @@ export default function ArsenalPage() {
                           {/* Photo ou fallback emoji */}
                           <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10 flex-shrink-0 bg-[#EF0107]/10 flex items-center justify-center">
                             <img
-                              src={`/arsenal/players/${p.photo}.webp`}
+                              src={`/arsenal/${p.photo}.webp`}
                               alt={p.name}
                               className="w-full h-full object-cover object-top"
                               onError={(e) => {
