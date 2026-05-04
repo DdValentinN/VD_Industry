@@ -73,7 +73,13 @@ export async function searchTickerByISIN(isin: string): Promise<string | null> {
   return null
 }
 
+// XTB/Degiro use .FR suffix; Yahoo Finance uses .PA for Euronext Paris
+function normalizeTickerForYahoo(ticker: string): string {
+  return ticker.endsWith('.FR') ? ticker.slice(0, -3) + '.PA' : ticker
+}
+
 export async function getQuote(ticker: string): Promise<ETFQuote | null> {
+  ticker = normalizeTickerForYahoo(ticker)
   const ckey = `quote:${ticker}`
   const hit = fromCache<ETFQuote>(ckey)
   if (hit) return hit
@@ -126,6 +132,7 @@ export async function getQuote(ticker: string): Promise<ETFQuote | null> {
 }
 
 export async function getHistory(ticker: string, range = '1y'): Promise<HistoryPoint[]> {
+  ticker = normalizeTickerForYahoo(ticker)
   const ckey = `hist:${ticker}:${range}`
   const hit  = fromCache<HistoryPoint[]>(ckey)
   if (hit) return hit
