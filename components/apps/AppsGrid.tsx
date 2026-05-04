@@ -90,7 +90,7 @@ export function AppsGrid({ vintedStats, financesStats, investStats, fitnessStats
         >
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-emerald-400">7 apps en production</span>
+            <span className="text-xs text-emerald-400">8 apps en production</span>
           </div>
         </motion.div>
 
@@ -424,6 +424,63 @@ export function AppsGrid({ vintedStats, financesStats, investStats, fitnessStats
                   ].map((s) => (
                     <div key={s.label} className="rounded-xl border border-white/8 bg-white/3 p-4 text-center">
                       <s.icon className="w-4 h-4 text-[#00FF87] mx-auto mb-2" />
+                      <p className="text-lg font-black text-white tabular-nums">{s.value}</p>
+                      <p className="text-[11px] text-gray-600 mt-0.5 leading-tight">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Link>
+        </motion.div>
+
+        {/* Arsenal FC App */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          className="mb-6"
+        >
+          <Link href="/app/arsenal" className="group block">
+            <div className="relative rounded-3xl border border-red-600/25 bg-gradient-to-br from-red-600/8 via-white/2 to-transparent p-8 hover:border-red-600/50 transition-all duration-300 hover:shadow-2xl hover:shadow-red-600/10 overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-red-600/8 blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-red-600/30 bg-red-600/10 text-red-400 text-xs mb-6">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                Live · Données en temps réel
+              </div>
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
+                <div className="flex-1">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-14 h-14 rounded-2xl bg-red-600/10 border border-red-600/25 flex items-center justify-center text-3xl group-hover:bg-red-600/20 transition-colors">
+                      🔴
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">Arsenal FC</h2>
+                      <p className="text-red-400/70 text-sm">The Gunners · Since 1886</p>
+                    </div>
+                  </div>
+                  <p className="text-gray-400 leading-relaxed mb-5 max-w-lg">
+                    Dashboard complet Arsenal — matchs live, calendrier PL, classement en temps réel,
+                    effectif détaillé, histoire du club, légendes et galerie photos personnalisée.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {['Next.js', 'football-data.org', 'Live scores', 'Tailwind'].map((tag) => (
+                      <span key={tag} className="px-2.5 py-1 rounded-full text-xs bg-red-600/8 text-red-400 border border-red-600/20">{tag}</span>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2 text-red-400 font-semibold text-sm group-hover:gap-3 transition-all duration-200">
+                    Voir le dashboard <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3 lg:w-72 flex-shrink-0">
+                  {[
+                    { icon: Trophy, label: 'Titres PL',    value: '13' },
+                    { icon: Star,   label: 'FA Cups',      value: '14' },
+                    { icon: Users,  label: 'Invincibles',  value: '2003-04' },
+                    { icon: Zap,    label: 'Live scores',  value: 'PL live' },
+                  ].map((s) => (
+                    <div key={s.label} className="rounded-xl border border-white/8 bg-white/3 p-4 text-center">
+                      <s.icon className="w-4 h-4 text-red-400 mx-auto mb-2" />
                       <p className="text-lg font-black text-white tabular-nums">{s.value}</p>
                       <p className="text-[11px] text-gray-600 mt-0.5 leading-tight">{s.label}</p>
                     </div>

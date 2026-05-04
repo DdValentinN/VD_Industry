@@ -18,6 +18,7 @@ const ADMIN_NAV = [
   { href: '/app/fitness',         icon: Flame,           label: 'Fitness' },
   { href: '/app/bot',             icon: Bot,             label: 'Bot Vinted' },
   { href: '/app/perftrack',       icon: Users,           label: 'PerfTrack' },
+  { href: '/app/arsenal',         icon: Shield,          label: 'Arsenal FC' },
   { href: '/app/snake',           icon: Gamepad2,        label: 'Snake' },
   { href: '/app/penalty',         icon: Gamepad2,        label: 'Penalty' },
   { href: '/app/parametres',      icon: Settings,        label: 'Paramètres' },
