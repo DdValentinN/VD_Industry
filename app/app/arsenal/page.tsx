@@ -34,20 +34,35 @@ interface StandingRow {
 // ─── Static data ──────────────────────────────────────────────────────────────
 
 const PLAYERS = [
-  { name: 'David Raya',          pos: 'GK',  num: 22, nat: '🇪🇸', age: 29, apps: 35 },
-  { name: 'Ben White',           pos: 'DEF', num: 4,  nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 27, apps: 28 },
-  { name: 'William Saliba',      pos: 'DEF', num: 12, nat: '🇫🇷', age: 24, apps: 36 },
-  { name: 'Gabriel Magalhães',   pos: 'DEF', num: 6,  nat: '🇧🇷', age: 27, apps: 34 },
-  { name: 'Oleks. Zinchenko',    pos: 'DEF', num: 35, nat: '🇺🇦', age: 28, apps: 22 },
-  { name: 'Jurrien Timber',      pos: 'DEF', num: 32, nat: '🇳🇱', age: 23, apps: 30 },
-  { name: 'Thomas Partey',       pos: 'MID', num: 5,  nat: '🇬🇭', age: 31, apps: 25 },
-  { name: 'Martin Ødegaard',     pos: 'MID', num: 8,  nat: '🇳🇴', age: 26, apps: 23, captain: true },
-  { name: 'Declan Rice',         pos: 'MID', num: 41, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 26, apps: 38 },
-  { name: 'Kai Havertz',         pos: 'MID', num: 29, nat: '🇩🇪', age: 26, apps: 37, goals: 14 },
-  { name: 'Bukayo Saka',         pos: 'ATT', num: 7,  nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 23, apps: 35, goals: 16, assists: 11 },
-  { name: 'Gabriel Martinelli',  pos: 'ATT', num: 11, nat: '🇧🇷', age: 23, apps: 32, goals: 8 },
-  { name: 'Leandro Trossard',    pos: 'ATT', num: 19, nat: '🇧🇪', age: 30, apps: 36, goals: 12 },
-  { name: 'Raheem Sterling',     pos: 'ATT', num: 30, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 30, apps: 20, goals: 5 },
+  // Gardiens
+  { name: 'David Raya',           pos: 'GK',  num: 1,  nat: '🇪🇸', age: 30 },
+  { name: 'Kepa Arrizabalaga',    pos: 'GK',  num: 13, nat: '🇪🇸', age: 31 },
+  { name: 'Tommy Setford',        pos: 'GK',  num: 35, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 20 },
+  // Défenseurs
+  { name: 'William Saliba',       pos: 'DEF', num: 2,  nat: '🇫🇷', age: 25 },
+  { name: 'Gabriel Magalhães',    pos: 'DEF', num: 6,  nat: '🇧🇷', age: 28 },
+  { name: 'Piero Hincapié',       pos: 'DEF', num: 5,  nat: '🇪🇨', age: 24 },
+  { name: 'Cristhian Mosquera',   pos: 'DEF', num: 3,  nat: '🇨🇴', age: 21 },
+  { name: 'Riccardo Calafiori',   pos: 'DEF', num: 33, nat: '🇮🇹', age: 23 },
+  { name: 'Myles Lewis-Skelly',   pos: 'DEF', num: 49, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 19 },
+  { name: 'Jurriën Timber',       pos: 'DEF', num: 12, nat: '🇳🇱', age: 24 },
+  { name: 'Ben White',            pos: 'DEF', num: 4,  nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 28 },
+  // Milieux
+  { name: 'Martín Zubimendi',     pos: 'MID', num: 36, nat: '🇪🇸', age: 27 },
+  { name: 'Christian Nørgaard',   pos: 'MID', num: 16, nat: '🇩🇰', age: 32 },
+  { name: 'Declan Rice',          pos: 'MID', num: 41, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 27 },
+  { name: 'Mikel Merino',         pos: 'MID', num: 23, nat: '🇪🇸', age: 29 },
+  { name: 'Martin Ødegaard',      pos: 'MID', num: 8,  nat: '🇳🇴', age: 27, captain: true },
+  { name: 'Eberechi Eze',         pos: 'MID', num: 10, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 27 },
+  // Attaquants
+  { name: 'Gabriel Martinelli',   pos: 'ATT', num: 11, nat: '🇧🇷', age: 24 },
+  { name: 'Leandro Trossard',     pos: 'ATT', num: 19, nat: '🇧🇪', age: 31 },
+  { name: 'Bukayo Saka',          pos: 'ATT', num: 7,  nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 24 },
+  { name: 'Noni Madueke',         pos: 'ATT', num: 20, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 24 },
+  { name: 'Viktor Gyökeres',      pos: 'ATT', num: 14, nat: '🇸🇪', age: 27 },
+  { name: 'Kai Havertz',          pos: 'ATT', num: 29, nat: '🇩🇪', age: 26 },
+  { name: 'Gabriel Jesus',        pos: 'ATT', num: 9,  nat: '🇧🇷', age: 29 },
+  { name: 'Max Dowman',           pos: 'ATT', num: 56, nat: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', age: 16 },
 ]
 
 const HISTORY = [
@@ -537,24 +552,12 @@ export default function ArsenalPage() {
                         <div className="flex gap-4 text-center border-t border-white/5 pt-3">
                           <div>
                             <p className="text-[11px] text-gray-500">Âge</p>
-                            <p className="text-white font-bold">{p.age}</p>
+                            <p className="text-white font-bold">{p.age} ans</p>
                           </div>
                           <div>
-                            <p className="text-[11px] text-gray-500">Matchs</p>
-                            <p className="text-white font-bold">{p.apps}</p>
+                            <p className="text-[11px] text-gray-500">Numéro</p>
+                            <p className="text-[#EF0107] font-bold">#{p.num}</p>
                           </div>
-                          {p.goals != null && (
-                            <div>
-                              <p className="text-[11px] text-gray-500">Buts</p>
-                              <p className="text-[#EF0107] font-bold">{p.goals}</p>
-                            </div>
-                          )}
-                          {p.assists != null && (
-                            <div>
-                              <p className="text-[11px] text-gray-500">Passes D</p>
-                              <p className="text-sky-400 font-bold">{p.assists}</p>
-                            </div>
-                          )}
                         </div>
                       </div>
                     ))}
