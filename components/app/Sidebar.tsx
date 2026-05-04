@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, ShoppingBag, Settings, ArrowLeft,
-  TrendingUp, Menu, X, LogIn, LogOut, Shield, Lock, Users, Flame, Bot,
+  TrendingUp, Menu, X, LogIn, LogOut, Shield, Lock, Users, Flame, Bot, Gamepad2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
@@ -18,6 +18,7 @@ const ADMIN_NAV = [
   { href: '/app/fitness',         icon: Flame,           label: 'Fitness' },
   { href: '/app/bot',             icon: Bot,             label: 'Bot Vinted' },
   { href: '/app/perftrack',       icon: Users,           label: 'PerfTrack' },
+  { href: '/app/snake',           icon: Gamepad2,        label: 'Snake' },
   { href: '/app/parametres',      icon: Settings,        label: 'Paramètres' },
 ]
 
