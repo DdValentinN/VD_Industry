@@ -171,7 +171,7 @@ export default function PenaltyPage() {
               </div>
             )}
 
-            {/* Gardien */}
+            {/* Gardien — 2× plus grand */}
             <div
               className="absolute bottom-2 pointer-events-none"
               style={{
@@ -182,24 +182,25 @@ export default function PenaltyPage() {
               }}
             >
               <div className="flex flex-col items-center">
+                {/* Tête */}
+                <div className="w-6 h-6 rounded-full bg-amber-300 border-2 border-amber-500" />
                 {/* Corps */}
-                <div className="w-3 h-3 rounded-full bg-amber-300 border border-amber-500" />
-                <div className="w-4 h-6 rounded bg-yellow-500 border border-yellow-600 -mt-0.5" />
+                <div className="w-8 h-12 rounded-lg bg-yellow-500 border-2 border-yellow-600 -mt-1" />
                 {/* Bras */}
-                <div className="absolute top-3 flex gap-8">
+                <div className="absolute top-5 flex gap-16">
                   <div
-                    className="w-5 h-1.5 bg-amber-300 rounded-full"
+                    className="w-10 h-3 bg-amber-300 rounded-full border border-amber-400"
                     style={{ transform: keeperDiving ? 'rotate(-30deg)' : 'rotate(-10deg)', transition: 'transform 0.5s' }}
                   />
                   <div
-                    className="w-5 h-1.5 bg-amber-300 rounded-full"
+                    className="w-10 h-3 bg-amber-300 rounded-full border border-amber-400"
                     style={{ transform: keeperDiving ? 'rotate(30deg)' : 'rotate(10deg)', transition: 'transform 0.5s' }}
                   />
                 </div>
                 {/* Jambes */}
-                <div className="flex gap-1 -mt-0.5">
-                  <div className="w-1.5 h-4 bg-yellow-700 rounded" style={{ transform: keeperDiving ? 'rotate(-20deg)' : 'none', transition: 'transform 0.5s' }} />
-                  <div className="w-1.5 h-4 bg-yellow-700 rounded" style={{ transform: keeperDiving ? 'rotate(20deg)' : 'none', transition: 'transform 0.5s' }} />
+                <div className="flex gap-2 -mt-1">
+                  <div className="w-3 h-8 bg-yellow-700 rounded border border-yellow-800" style={{ transform: keeperDiving ? 'rotate(-20deg)' : 'none', transition: 'transform 0.5s' }} />
+                  <div className="w-3 h-8 bg-yellow-700 rounded border border-yellow-800" style={{ transform: keeperDiving ? 'rotate(20deg)' : 'none', transition: 'transform 0.5s' }} />
                 </div>
               </div>
             </div>
