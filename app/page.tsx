@@ -13,7 +13,7 @@ import { Footer } from '@/components/portfolio/Footer'
 async function getPortfolioStats() {
   try {
     const vendus = await prisma.article.findMany({
-      where: { statut: 'Vendu', prixVente: { not: null } },
+      where: { userId: 'valentin', statut: 'Vendu', prixVente: { not: null } },
     })
     const beneficeTotal = vendus.reduce(
       (sum, a) => sum + calculateBenefit(a.prixVente!, a.prixAchat, a.fraisDivers),
