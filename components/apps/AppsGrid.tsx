@@ -90,7 +90,7 @@ export function AppsGrid({ vintedStats, financesStats, investStats, fitnessStats
         >
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-emerald-400">6 apps en production</span>
+            <span className="text-xs text-emerald-400">7 apps en production</span>
           </div>
         </motion.div>
 
@@ -492,6 +492,63 @@ export function AppsGrid({ vintedStats, financesStats, investStats, fitnessStats
                   ].map((s) => (
                     <div key={s.label} className="rounded-xl border border-white/8 bg-white/3 p-4 text-center">
                       <s.icon className="w-4 h-4 text-pink-400 mx-auto mb-2" />
+                      <p className="text-lg font-black text-white tabular-nums">{s.value}</p>
+                      <p className="text-[11px] text-gray-600 mt-0.5 leading-tight">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Link>
+        </motion.div>
+
+        {/* Penalty Game */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mb-6"
+        >
+          <Link href="/app/penalty" className="group block">
+            <div className="relative rounded-3xl border border-amber-500/25 bg-gradient-to-br from-amber-500/5 via-white/2 to-transparent p-8 hover:border-amber-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/10 overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-amber-500/5 blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400 text-xs mb-6">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                Live · Accessible à tous
+              </div>
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
+                <div className="flex-1">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center group-hover:bg-amber-500/20 transition-colors text-2xl">
+                      ⚽
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">Penalty Shootout</h2>
+                      <p className="text-amber-400/70 text-sm">Mini-jeu · Tirs au but</p>
+                    </div>
+                  </div>
+                  <p className="text-gray-400 leading-relaxed mb-5 max-w-lg">
+                    Jeu de tirs au but — choisis ta zone de tir (6 zones), le gardien plonge aléatoirement.
+                    Suivi du score en temps réel, précision, série de buts consécutifs.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {['React', 'Next.js', 'CSS Animations', 'Tailwind'].map((tag) => (
+                      <span key={tag} className="px-2.5 py-1 rounded-full text-xs bg-amber-500/8 text-amber-400 border border-amber-500/20">{tag}</span>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2 text-amber-400 font-semibold text-sm group-hover:gap-3 transition-all duration-200">
+                    Jouer maintenant <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3 lg:w-72 flex-shrink-0">
+                  {[
+                    { icon: Gamepad2, label: 'Zones de tir',   value: '6' },
+                    { icon: Trophy,   label: 'Gardien',        value: 'Aléatoire' },
+                    { icon: Zap,      label: 'Série max',      value: 'Illimitée' },
+                    { icon: Star,     label: 'Précision',      value: 'Trackée' },
+                  ].map((s) => (
+                    <div key={s.label} className="rounded-xl border border-white/8 bg-white/3 p-4 text-center">
+                      <s.icon className="w-4 h-4 text-amber-400 mx-auto mb-2" />
                       <p className="text-lg font-black text-white tabular-nums">{s.value}</p>
                       <p className="text-[11px] text-gray-600 mt-0.5 leading-tight">{s.label}</p>
                     </div>
