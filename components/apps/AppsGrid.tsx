@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import {
   BarChart3, ArrowRight, TrendingUp, Package, Percent,
-  LineChart, Lock, Clock, Layers, Users, Euro, PiggyBank,
+  LineChart, Lock, Clock, Layers, Users, Euro, PiggyBank, Gamepad2, Trophy, Zap, Star,
 } from 'lucide-react'
 import { formatCurrency, formatPercent } from '@/lib/utils'
 
@@ -90,7 +90,7 @@ export function AppsGrid({ vintedStats, financesStats, investStats, fitnessStats
         >
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-emerald-400">5 apps en production</span>
+            <span className="text-xs text-emerald-400">6 apps en production</span>
           </div>
         </motion.div>
 
@@ -424,6 +424,74 @@ export function AppsGrid({ vintedStats, financesStats, investStats, fitnessStats
                   ].map((s) => (
                     <div key={s.label} className="rounded-xl border border-white/8 bg-white/3 p-4 text-center">
                       <s.icon className="w-4 h-4 text-[#00FF87] mx-auto mb-2" />
+                      <p className="text-lg font-black text-white tabular-nums">{s.value}</p>
+                      <p className="text-[11px] text-gray-600 mt-0.5 leading-tight">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Link>
+        </motion.div>
+
+        {/* Snake Game */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          className="mb-6"
+        >
+          <Link href="/app/snake" className="group block">
+            <div className="relative rounded-3xl border border-pink-500/25 bg-gradient-to-br from-pink-500/5 via-white/2 to-transparent p-8 hover:border-pink-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-pink-500/10 overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-pink-500/5 blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-pink-500/30 bg-pink-500/10 text-pink-400 text-xs mb-6">
+                <span className="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse" />
+                Live · Accessible à tous
+              </div>
+
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
+                <div className="flex-1">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-14 h-14 rounded-2xl bg-pink-500/10 border border-pink-500/25 flex items-center justify-center group-hover:bg-pink-500/20 transition-colors">
+                      <Gamepad2 className="w-6 h-6 text-pink-400" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">Snake</h2>
+                      <p className="text-pink-400/70 text-sm">Mini-jeu · Classique revisité</p>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-400 leading-relaxed mb-5 max-w-lg">
+                    Le classique Snake entièrement développé en React — grille 20×20,
+                    accélération progressive, high score sauvegardé, contrôles clavier (Flèches / ZQSD)
+                    et swipe mobile.
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {['React', 'Next.js', 'TypeScript', 'Tailwind', 'localStorage'].map((tag) => (
+                      <span key={tag} className="px-2.5 py-1 rounded-full text-xs bg-pink-500/8 text-pink-400 border border-pink-500/20">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-2 text-pink-400 font-semibold text-sm group-hover:gap-3 transition-all duration-200">
+                    Jouer maintenant
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-3 lg:w-72 flex-shrink-0">
+                  {[
+                    { icon: Gamepad2, label: 'Grille',        value: '20×20' },
+                    { icon: Zap,      label: 'Vitesse max',   value: '2.5×' },
+                    { icon: Trophy,   label: 'High score',    value: 'Local' },
+                    { icon: Star,     label: 'Contrôles',     value: 'ZQSD + ↑↓←→' },
+                  ].map((s) => (
+                    <div key={s.label} className="rounded-xl border border-white/8 bg-white/3 p-4 text-center">
+                      <s.icon className="w-4 h-4 text-pink-400 mx-auto mb-2" />
                       <p className="text-lg font-black text-white tabular-nums">{s.value}</p>
                       <p className="text-[11px] text-gray-600 mt-0.5 leading-tight">{s.label}</p>
                     </div>
