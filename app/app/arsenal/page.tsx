@@ -659,23 +659,15 @@ export default function ArsenalPage() {
             <p className="text-gray-500 mb-8">Tes photos Arsenal — dépose tes images dans <code className="text-[#EF0107] bg-[#EF0107]/10 px-1.5 py-0.5 rounded text-xs">public/arsenal/</code> pour les voir apparaître ici.</p>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {/* Placeholder cards */}
               {[1,2,3,4,5,6].map(i => (
-                <div key={i} className="aspect-square rounded-2xl border-2 border-dashed border-[#EF0107]/20 bg-[#EF0107]/3 flex flex-col items-center justify-center gap-2 hover:border-[#EF0107]/40 transition-colors">
-                  <span className="text-3xl opacity-30">📸</span>
-                  <p className="text-gray-600 text-xs">Photo {i}</p>
-                  <p className="text-gray-700 text-[10px]">public/arsenal/photo{i}.jpg</p>
+                <div key={i} className="aspect-square rounded-2xl overflow-hidden border border-white/10 hover:border-[#EF0107]/40 transition-all group relative">
+                  <img
+                    src={`/arsenal/photo${i}.jpg`}
+                    alt={`Arsenal photo ${i}`}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
               ))}
-            </div>
-
-            <div className="mt-8 rounded-2xl border border-white/10 bg-white/3 p-6">
-              <h3 className="text-white font-semibold mb-3">📁 Comment ajouter des photos</h3>
-              <ol className="space-y-2 text-gray-400 text-sm">
-                <li>1. Dépose tes images dans le dossier <code className="text-[#EF0107]">public/arsenal/</code></li>
-                <li>2. Nomme-les <code className="text-[#EF0107]">photo1.jpg</code>, <code className="text-[#EF0107]">photo2.jpg</code>, etc.</li>
-                <li>3. Push sur GitHub — les photos s&apos;afficheront automatiquement</li>
-              </ol>
             </div>
           </div>
         )}
