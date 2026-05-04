@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma'
 import { calculateBenefit } from '@/lib/utils'
 import { Hero } from '@/components/portfolio/Hero'
+
+export const dynamic = 'force-dynamic'
 import { About } from '@/components/portfolio/About'
 import { Skills } from '@/components/portfolio/Skills'
 import { Experience } from '@/components/portfolio/Experience'

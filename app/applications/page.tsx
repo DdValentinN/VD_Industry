@@ -3,6 +3,8 @@ import { calculateBenefit } from '@/lib/utils'
 import { AppsGrid } from '@/components/apps/AppsGrid'
 import { Footer } from '@/components/portfolio/Footer'
 
+export const dynamic = 'force-dynamic'
+
 async function getVintedStats() {
   try {
     const [total, vendus] = await Promise.all([
