@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import {
   Euro, TrendingUp, TrendingDown, Wallet, Shield, ChevronLeft, ChevronRight,
-  Settings, Plus, Edit2, Trash2, X, Save, Users,
+  Settings, Plus, Edit2, Trash2, X, Save, Users, ChevronDown, ChevronUp,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,32 +21,48 @@ import type { FinancesParams, FinancesCharge, FinancesMois, FinancesMoisComputed
 const MOIS = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc']
 const MOIS_FULL = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
 
-// ─── Modal: Edit Monthly Revenue ─────────────────────────────────────────────
+// ─── Modal: Edit Monthly Revenue (avec détail revenus) ────────────────────────
 
 interface MoisModalProps {
   open: boolean
   onClose: () => void
   mois: number
   annee: number
-  nom1: string
-  nom2: string
+  params: FinancesParams
   chargesTotales: number
   existingEntry: FinancesMois | null
   onSuccess: () => void
 }
 
-function MoisModal({ open, onClose, mois, annee, nom1, nom2, chargesTotales, existingEntry, onSuccess }: MoisModalProps) {
-  const [revenu1, setRevenu1] = useState('')
-  const [revenu2, setRevenu2] = useState('')
-  const [saving, setSaving] = useState(false)
+function MoisModal({ open, onClose, mois, annee, params, chargesTotales, existingEntry, onSuccess }: MoisModalProps) {
+  const [salaire, setSalaire]   = useState('')
+  const [apl, setApl]           = useState('')
+  const [aide, setAide]         = useState('')
+  const [prime, setPrime]       = useState('')
+  const [revenu2, setRevenu2]   = useState('')
+  const [saving, setSaving]     = useState(false)
 
   useEffect(() => {
     if (!open) return
-    setRevenu1(existingEntry ? String(existingEntry.revenu1) : '')
-    setRevenu2(existingEntry ? String(existingEntry.revenu2) : '')
-  }, [open, existingEntry])
+    if (existingEntry) {
+      // Distribute back: salaire is remainder after known aides
+      const knownAides = params.apl1 + params.aideMobili1 + params.primeActivite1
+      const salaireEstim = Math.max(0, existingEntry.revenu1 - knownAides)
+      setSalaire(String(salaireEstim))
+      setApl(String(params.apl1))
+      setAide(String(params.aideMobili1))
+      setPrime(String(params.primeActivite1))
+      setRevenu2(String(existingEntry.revenu2))
+    } else {
+      setSalaire(String(params.salaire1))
+      setApl(String(params.apl1))
+      setAide(String(params.aideMobili1))
+      setPrime(String(params.primeActivite1))
+      setRevenu2(String(params.revenu2Projection))
+    }
+  }, [open, existingEntry, params])
 
-  const r1 = parseFloat(revenu1) || 0
+  const r1 = (parseFloat(salaire) || 0) + (parseFloat(apl) || 0) + (parseFloat(aide) || 0) + (parseFloat(prime) || 0)
   const r2 = parseFloat(revenu2) || 0
   const total = r1 + r2
   const epargne = total - chargesTotales
@@ -71,21 +87,53 @@ function MoisModal({ open, onClose, mois, annee, nom1, nom2, chargesTotales, exi
     }
   }
 
+  const inputCls = 'bg-[#1a1a1a] border-white/15 text-white placeholder-gray-600 text-sm'
+
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-sm bg-[#111] border-white/10">
+      <DialogContent className="max-w-md bg-[#111] border-white/10">
         <DialogHeader>
           <DialogTitle>Revenus — {MOIS_FULL[mois - 1]} {annee}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSave} className="space-y-4 mt-2">
-          <div className="space-y-1">
-            <Label htmlFor="r1">Salaire {nom1} (€)</Label>
-            <Input id="r1" type="number" step="0.01" min="0" value={revenu1} onChange={(e) => setRevenu1(e.target.value)} placeholder="0.00" />
+        <form onSubmit={handleSave} className="space-y-5 mt-2">
+
+          {/* Valentin breakdown */}
+          <div className="rounded-xl border border-sky-500/20 bg-sky-500/5 p-4 space-y-3">
+            <p className="text-xs font-semibold text-sky-400 uppercase tracking-wider">{params.nom1}</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label className="text-gray-400 text-xs">Salaire net (€)</Label>
+                <Input className={inputCls} type="number" step="0.01" min="0" value={salaire} onChange={e => setSalaire(e.target.value)} placeholder="0.00" />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-gray-400 text-xs">APL (€)</Label>
+                <Input className={inputCls} type="number" step="0.01" min="0" value={apl} onChange={e => setApl(e.target.value)} placeholder="0.00" />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-gray-400 text-xs">Aide Mobili Jeune (€)</Label>
+                <Input className={inputCls} type="number" step="0.01" min="0" value={aide} onChange={e => setAide(e.target.value)} placeholder="0.00" />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-gray-400 text-xs">Prime d'activité (€)</Label>
+                <Input className={inputCls} type="number" step="0.01" min="0" value={prime} onChange={e => setPrime(e.target.value)} placeholder="0.00" />
+              </div>
+            </div>
+            <div className="flex items-center justify-between pt-1 border-t border-white/10">
+              <span className="text-xs text-gray-500">Total {params.nom1}</span>
+              <span className="text-sm font-bold text-sky-400">{formatCurrency(r1)}</span>
+            </div>
           </div>
-          <div className="space-y-1">
-            <Label htmlFor="r2">Salaire {nom2} (€)</Label>
-            <Input id="r2" type="number" step="0.01" min="0" value={revenu2} onChange={(e) => setRevenu2(e.target.value)} placeholder="0.00" />
+
+          {/* Clara */}
+          <div className="rounded-xl border border-purple-500/20 bg-purple-500/5 p-4 space-y-3">
+            <p className="text-xs font-semibold text-purple-400 uppercase tracking-wider">{params.nom2}</p>
+            <div className="space-y-1">
+              <Label className="text-gray-400 text-xs">Revenus {params.nom2} (€)</Label>
+              <Input className={inputCls} type="number" step="0.01" min="0" value={revenu2} onChange={e => setRevenu2(e.target.value)} placeholder="0.00" />
+            </div>
           </div>
+
+          {/* Preview */}
           {(r1 > 0 || r2 > 0) && (
             <div className="rounded-xl border border-white/10 bg-white/3 p-4 space-y-2 text-sm">
               <div className="flex justify-between text-gray-400">
@@ -102,7 +150,8 @@ function MoisModal({ open, onClose, mois, annee, nom1, nom2, chargesTotales, exi
               </div>
             </div>
           )}
-          <div className="flex gap-3 pt-1">
+
+          <div className="flex gap-3">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1" disabled={saving}>Annuler</Button>
             <Button type="submit" className="flex-1" disabled={saving}>{saving ? 'Sauvegarde...' : 'Enregistrer'}</Button>
           </div>
@@ -112,7 +161,7 @@ function MoisModal({ open, onClose, mois, annee, nom1, nom2, chargesTotales, exi
   )
 }
 
-// ─── Modal: Manage Charges ───────────────────────────────────────────────────
+// ─── Modal: Manage Charges ────────────────────────────────────────────────────
 
 interface ChargesModalProps {
   open: boolean
@@ -122,23 +171,21 @@ interface ChargesModalProps {
 }
 
 function ChargesModal({ open, onClose, charges, onSuccess }: ChargesModalProps) {
-  const [editId, setEditId] = useState<number | null>(null)
-  const [editNom, setEditNom] = useState('')
+  const [editId, setEditId]       = useState<number | null>(null)
+  const [editNom, setEditNom]     = useState('')
   const [editMontant, setEditMontant] = useState('')
-  const [editType, setEditType] = useState<'fixe' | 'variable'>('fixe')
-  const [addMode, setAddMode] = useState(false)
-  const [newNom, setNewNom] = useState('')
+  const [editType, setEditType]   = useState<'fixe' | 'variable'>('fixe')
+  const [addMode, setAddMode]     = useState(false)
+  const [newNom, setNewNom]       = useState('')
   const [newMontant, setNewMontant] = useState('')
-  const [newType, setNewType] = useState<'fixe' | 'variable'>('fixe')
-  const [loading, setLoading] = useState(false)
+  const [newType, setNewType]     = useState<'fixe' | 'variable'>('fixe')
+  const [loading, setLoading]     = useState(false)
 
   const selectClass = 'rounded-md border border-white/20 bg-[#1a1a1a] text-white px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500'
 
   function startEdit(c: FinancesCharge) {
-    setEditId(c.id)
-    setEditNom(c.nom)
-    setEditMontant(String(c.montant))
-    setEditType(c.type as 'fixe' | 'variable')
+    setEditId(c.id); setEditNom(c.nom)
+    setEditMontant(String(c.montant)); setEditType(c.type as 'fixe' | 'variable')
     setAddMode(false)
   }
 
@@ -152,9 +199,7 @@ function ChargesModal({ open, onClose, charges, onSuccess }: ChargesModalProps) 
         body: JSON.stringify({ nom: editNom, montant: parseFloat(editMontant) || 0, type: editType }),
       })
       if (!res.ok) throw new Error()
-      toast.success('Charge modifiée')
-      setEditId(null)
-      onSuccess()
+      toast.success('Charge modifiée'); setEditId(null); onSuccess()
     } catch { toast.error('Erreur') } finally { setLoading(false) }
   }
 
@@ -185,7 +230,7 @@ function ChargesModal({ open, onClose, charges, onSuccess }: ChargesModalProps) 
     } catch { toast.error('Erreur') } finally { setLoading(false) }
   }
 
-  const fixes = charges.filter(c => c.type === 'fixe')
+  const fixes    = charges.filter(c => c.type === 'fixe')
   const variables = charges.filter(c => c.type === 'variable')
   const totalFix = fixes.reduce((s, c) => s + c.montant, 0)
   const totalVar = variables.reduce((s, c) => s + c.montant, 0)
@@ -197,8 +242,8 @@ function ChargesModal({ open, onClose, charges, onSuccess }: ChargesModalProps) 
           <DialogTitle>Gérer les charges mensuelles</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 mt-2">
-          {['fixe', 'variable'].map((typ) => {
-            const list = typ === 'fixe' ? fixes : variables
+          {(['fixe', 'variable'] as const).map((typ) => {
+            const list  = typ === 'fixe' ? fixes : variables
             const total = typ === 'fixe' ? totalFix : totalVar
             return (
               <div key={typ}>
@@ -239,7 +284,6 @@ function ChargesModal({ open, onClose, charges, onSuccess }: ChargesModalProps) 
             )
           })}
 
-          {/* Add form */}
           {addMode ? (
             <form onSubmit={addCharge} className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 space-y-3">
               <p className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Nouvelle charge</p>
@@ -272,7 +316,7 @@ function ChargesModal({ open, onClose, charges, onSuccess }: ChargesModalProps) 
   )
 }
 
-// ─── Modal: Parameters ───────────────────────────────────────────────────────
+// ─── Modal: Parameters ────────────────────────────────────────────────────────
 
 interface ParamsModalProps {
   open: boolean
@@ -286,7 +330,8 @@ function ParamsModal({ open, onClose, params, onSuccess }: ParamsModalProps) {
     nom1: 'Valentin', nom2: 'Clara',
     soldeDepart: '23000', objectifEpargne: '500',
     nbMoisSecurite: '6', anneeRef: '2026',
-    revenu1Projection: '2332', revenu2Projection: '436',
+    salaire1: '1636', apl1: '199', aideMobili1: '100', primeActivite1: '150',
+    revenu2Projection: '511',
   })
   const [saving, setSaving] = useState(false)
 
@@ -298,12 +343,18 @@ function ParamsModal({ open, onClose, params, onSuccess }: ParamsModalProps) {
       objectifEpargne: String(params.objectifEpargne),
       nbMoisSecurite: String(params.nbMoisSecurite),
       anneeRef: String(params.anneeRef),
-      revenu1Projection: String(params.revenu1Projection),
+      salaire1: String(params.salaire1 ?? 1636),
+      apl1: String(params.apl1 ?? 199),
+      aideMobili1: String(params.aideMobili1 ?? 100),
+      primeActivite1: String(params.primeActivite1 ?? 150),
       revenu2Projection: String(params.revenu2Projection),
     })
   }, [open, params])
 
   function upd(k: string, v: string) { setForm(f => ({ ...f, [k]: v })) }
+
+  const totalV = (parseFloat(form.salaire1) || 0) + (parseFloat(form.apl1) || 0)
+    + (parseFloat(form.aideMobili1) || 0) + (parseFloat(form.primeActivite1) || 0)
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
@@ -312,12 +363,14 @@ function ParamsModal({ open, onClose, params, onSuccess }: ParamsModalProps) {
       const res = await fetch('/api/finances/params', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          revenu1Projection: totalV,
+        }),
       })
       if (!res.ok) throw new Error()
       toast.success('Paramètres sauvegardés')
-      onSuccess()
-      onClose()
+      onSuccess(); onClose()
     } catch {
       toast.error('Erreur lors de la sauvegarde')
     } finally {
@@ -327,26 +380,52 @@ function ParamsModal({ open, onClose, params, onSuccess }: ParamsModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-md bg-[#111] border-white/10">
+      <DialogContent className="max-w-md bg-[#111] border-white/10 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Paramètres du couple</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSave} className="space-y-4 mt-2">
+        <form onSubmit={handleSave} className="space-y-5 mt-2">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1"><Label>Prénom 1</Label><Input value={form.nom1} onChange={(e) => upd('nom1', e.target.value)} /></div>
             <div className="space-y-1"><Label>Prénom 2</Label><Input value={form.nom2} onChange={(e) => upd('nom2', e.target.value)} /></div>
           </div>
-          <div className="space-y-1"><Label>Solde de départ du couple (€)</Label><Input type="number" step="0.01" value={form.soldeDepart} onChange={(e) => upd('soldeDepart', e.target.value)} /></div>
+          <div className="space-y-1">
+            <Label>Solde de départ du couple (€)</Label>
+            <Input type="number" step="0.01" value={form.soldeDepart} onChange={(e) => upd('soldeDepart', e.target.value)} />
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1"><Label>Objectif épargne (€/mois)</Label><Input type="number" step="1" value={form.objectifEpargne} onChange={(e) => upd('objectifEpargne', e.target.value)} /></div>
             <div className="space-y-1"><Label>Mois de sécurité</Label><Input type="number" step="1" min="1" value={form.nbMoisSecurite} onChange={(e) => upd('nbMoisSecurite', e.target.value)} /></div>
           </div>
-          <div className="space-y-1"><Label>Année de référence</Label><Input type="number" step="1" value={form.anneeRef} onChange={(e) => upd('anneeRef', e.target.value)} /></div>
-          <p className="text-xs text-gray-500 font-medium uppercase tracking-wider pt-1">Projection 5 ans — revenus mensuels estimés</p>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1"><Label>Revenu {form.nom1} (€/mois)</Label><Input type="number" step="0.01" value={form.revenu1Projection} onChange={(e) => upd('revenu1Projection', e.target.value)} /></div>
-            <div className="space-y-1"><Label>Revenu {form.nom2} (€/mois)</Label><Input type="number" step="0.01" value={form.revenu2Projection} onChange={(e) => upd('revenu2Projection', e.target.value)} /></div>
+          <div className="space-y-1">
+            <Label>Année de référence</Label>
+            <Input type="number" step="1" value={form.anneeRef} onChange={(e) => upd('anneeRef', e.target.value)} />
           </div>
+
+          {/* Valentin breakdown */}
+          <div className="rounded-xl border border-sky-500/20 bg-sky-500/5 p-4 space-y-3">
+            <p className="text-xs font-semibold text-sky-400 uppercase tracking-wider">Revenus {form.nom1} — projection</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1"><Label className="text-xs text-gray-400">Salaire net (€)</Label><Input type="number" step="0.01" value={form.salaire1} onChange={(e) => upd('salaire1', e.target.value)} /></div>
+              <div className="space-y-1"><Label className="text-xs text-gray-400">APL (€)</Label><Input type="number" step="0.01" value={form.apl1} onChange={(e) => upd('apl1', e.target.value)} /></div>
+              <div className="space-y-1"><Label className="text-xs text-gray-400">Aide Mobili Jeune (€)</Label><Input type="number" step="0.01" value={form.aideMobili1} onChange={(e) => upd('aideMobili1', e.target.value)} /></div>
+              <div className="space-y-1"><Label className="text-xs text-gray-400">Prime d'activité (€)</Label><Input type="number" step="0.01" value={form.primeActivite1} onChange={(e) => upd('primeActivite1', e.target.value)} /></div>
+            </div>
+            <div className="flex items-center justify-between border-t border-white/10 pt-2">
+              <span className="text-xs text-gray-500">Total {form.nom1}</span>
+              <span className="text-sm font-bold text-sky-400">{formatCurrency(totalV)}</span>
+            </div>
+          </div>
+
+          {/* Clara */}
+          <div className="rounded-xl border border-purple-500/20 bg-purple-500/5 p-4 space-y-3">
+            <p className="text-xs font-semibold text-purple-400 uppercase tracking-wider">Revenus {form.nom2} — projection</p>
+            <div className="space-y-1">
+              <Label className="text-xs text-gray-400">Revenus {form.nom2} (€/mois)</Label>
+              <Input type="number" step="0.01" value={form.revenu2Projection} onChange={(e) => upd('revenu2Projection', e.target.value)} />
+            </div>
+          </div>
+
           <div className="flex gap-3 pt-1">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1" disabled={saving}>Annuler</Button>
             <Button type="submit" className="flex-1" disabled={saving}>{saving ? 'Sauvegarde...' : 'Enregistrer'}</Button>
@@ -357,20 +436,110 @@ function ParamsModal({ open, onClose, params, onSuccess }: ParamsModalProps) {
   )
 }
 
+// ─── Composant: Carte structure des revenus ───────────────────────────────────
+
+function RevenusStructureCard({ params, chargesTotales }: { params: FinancesParams; chargesTotales: number }) {
+  const totalV = params.revenu1Projection
+  const totalC = params.revenu2Projection
+  const totalCouple = totalV + totalC
+  const epargne = totalCouple - chargesTotales
+  const taux = totalCouple > 0 ? epargne / totalCouple : 0
+
+  const composantes = [
+    { label: 'Salaire net', montant: params.salaire1 ?? 0, color: '#3b82f6' },
+    { label: 'APL', montant: params.apl1 ?? 0, color: '#06b6d4' },
+    { label: 'Aide Mobili Jeune', montant: params.aideMobili1 ?? 0, color: '#8b5cf6' },
+    { label: "Prime d'activité", montant: params.primeActivite1 ?? 0, color: '#f59e0b' },
+  ]
+
+  return (
+    <div className="grid sm:grid-cols-2 gap-4">
+      {/* Valentin */}
+      <div className="rounded-xl border border-sky-500/20 bg-[#111] p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <p className="text-xs font-semibold text-sky-400 uppercase tracking-wider">{params.nom1}</p>
+            <p className="text-2xl font-bold text-white mt-1">{formatCurrency(totalV)}<span className="text-sm text-gray-500 font-normal">/mois</span></p>
+          </div>
+          <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center">
+            <TrendingUp className="w-5 h-5 text-sky-400" />
+          </div>
+        </div>
+        <div className="space-y-2.5">
+          {composantes.map((c) => (
+            <div key={c.label}>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs text-gray-400">{c.label}</span>
+                <span className="text-xs font-semibold text-gray-200 tabular-nums">{formatCurrency(c.montant)}</span>
+              </div>
+              <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all"
+                  style={{ width: `${totalV > 0 ? (c.montant / totalV) * 100 : 0}%`, backgroundColor: c.color }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Clara + résumé couple */}
+      <div className="space-y-4">
+        <div className="rounded-xl border border-purple-500/20 bg-[#111] p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <p className="text-xs font-semibold text-purple-400 uppercase tracking-wider">{params.nom2}</p>
+              <p className="text-2xl font-bold text-white mt-1">{formatCurrency(totalC)}<span className="text-sm text-gray-500 font-normal">/mois</span></p>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+              <Users className="w-5 h-5 text-purple-400" />
+            </div>
+          </div>
+          <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+            <div className="h-full rounded-full bg-purple-500" style={{ width: `${totalCouple > 0 ? (totalC / totalCouple) * 100 : 0}%` }} />
+          </div>
+          <p className="text-xs text-gray-500 mt-1.5">{totalCouple > 0 ? ((totalC / totalCouple) * 100).toFixed(0) : 0}% du revenu couple</p>
+        </div>
+
+        {/* Couple summary */}
+        <div className="rounded-xl border border-emerald-500/20 bg-[#111] p-4 space-y-2">
+          <p className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Résumé couple</p>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-400">Revenus totaux</span>
+            <span className="text-white font-semibold">{formatCurrency(totalCouple)}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-400">Charges</span>
+            <span className="text-red-400">− {formatCurrency(chargesTotales)}</span>
+          </div>
+          <div className="border-t border-white/10 pt-2 flex justify-between text-sm font-semibold">
+            <span className="text-gray-300">Épargne potentielle</span>
+            <span className={epargne >= 0 ? 'text-emerald-400' : 'text-red-400'}>{formatCurrency(epargne)}</span>
+          </div>
+          <div className="flex justify-between text-xs text-gray-500">
+            <span>Taux d'épargne</span>
+            <span className={taux >= 0.2 ? 'text-emerald-400' : taux >= 0 ? 'text-amber-400' : 'text-red-400'}>{formatPercent(taux)}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function FinancesPage() {
   const { isAdmin } = useAuth()
-  const [params, setParams] = useState<FinancesParams | null>(null)
-  const [charges, setCharges] = useState<FinancesCharge[]>([])
+  const [params, setParams]           = useState<FinancesParams | null>(null)
+  const [charges, setCharges]         = useState<FinancesCharge[]>([])
   const [moisEntries, setMoisEntries] = useState<FinancesMois[]>([])
-  const [annee, setAnnee] = useState(2026)
-  const [loading, setLoading] = useState(true)
+  const [annee, setAnnee]             = useState(2026)
+  const [loading, setLoading]         = useState(true)
+  const [showRevenusDetail, setShowRevenusDetail] = useState(true)
 
-  // Modal states
-  const [editMois, setEditMois] = useState<number | null>(null)
+  const [editMois, setEditMois]     = useState<number | null>(null)
   const [showCharges, setShowCharges] = useState(false)
-  const [showParams, setShowParams] = useState(false)
+  const [showParams, setShowParams]   = useState(false)
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -393,13 +562,12 @@ export default function FinancesPage() {
 
   useEffect(() => { fetchData() }, [fetchData])
 
-  // ── Compute dashboard ─────────────────────────────────────────────────────
   const dash = useMemo(() => {
     if (!params) return null
 
-    const chargesFixes = charges.filter(c => c.type === 'fixe').reduce((s, c) => s + c.montant, 0)
+    const chargesFixes     = charges.filter(c => c.type === 'fixe').reduce((s, c) => s + c.montant, 0)
     const chargesVariables = charges.filter(c => c.type === 'variable').reduce((s, c) => s + c.montant, 0)
-    const chargesTotales = chargesFixes + chargesVariables
+    const chargesTotales   = chargesFixes + chargesVariables
 
     let solde = params.soldeDepart
     const moisData: FinancesMoisComputed[] = Array.from({ length: 12 }, (_, i) => {
@@ -412,8 +580,7 @@ export default function FinancesPage() {
       const epargne = hasData ? revenuTotal - chargesTotales : 0
       if (hasData) solde += epargne
       return {
-        mois: m,
-        nom: MOIS[i],
+        mois: m, nom: MOIS[i],
         revenu1, revenu2, revenuTotal,
         chargesFixes, chargesVariables, chargesTotales,
         epargne, solde,
@@ -424,79 +591,57 @@ export default function FinancesPage() {
       }
     })
 
-    const moisAvecDonnees = moisData.filter(m => m.hasData)
-    const revenuAnnuel = moisAvecDonnees.reduce((s, m) => s + m.revenuTotal, 0)
-    const chargesAnnuelles = chargesTotales * moisAvecDonnees.length
-    const epargnAnnuelle = revenuAnnuel - chargesAnnuelles
-    const tauxEpargne = revenuAnnuel > 0 ? epargnAnnuelle / revenuAnnuel : 0
-    const soldeFin = moisData[11].solde
-    const fondUrgence = chargesTotales * params.nbMoisSecurite
+    const moisAvecDonnees   = moisData.filter(m => m.hasData)
+    const revenuAnnuel      = moisAvecDonnees.reduce((s, m) => s + m.revenuTotal, 0)
+    const chargesAnnuelles  = chargesTotales * moisAvecDonnees.length
+    const epargnAnnuelle    = revenuAnnuel - chargesAnnuelles
+    const tauxEpargne       = revenuAnnuel > 0 ? epargnAnnuelle / revenuAnnuel : 0
+    const soldeFin          = moisData[11].solde
+    const fondUrgence       = chargesTotales * params.nbMoisSecurite
     const couvertureUrgence = fondUrgence > 0 ? soldeFin / fondUrgence : 0
 
     const epargnesmois = moisAvecDonnees.map(m => m.epargne)
     const meilleurMois = epargnesmois.length > 0 ? Math.max(...epargnesmois) : 0
-    const pireMois = epargnesmois.length > 0 ? Math.min(...epargnesmois) : 0
+    const pireMois     = epargnesmois.length > 0 ? Math.min(...epargnesmois) : 0
     const moisObjectif = moisAvecDonnees.filter(m => m.epargne >= params.objectifEpargne).length
 
-    // ── 5-year projection ──────────────────────────────────────────────────
-    const revMensuelProj = params.revenu1Projection + params.revenu2Projection
-    const revAnnuelProj = revMensuelProj * 12
+    const revMensuelProj      = params.revenu1Projection + params.revenu2Projection
+    const revAnnuelProj       = revMensuelProj * 12
     const chargesAnnuellesFixed = chargesTotales * 12
-    const epargnAnnuelleProj = revAnnuelProj - chargesAnnuellesFixed
+    const epargnAnnuelleProj  = revAnnuelProj - chargesAnnuellesFixed
 
     let soldeProj = params.soldeDepart
-    const currentYear = new Date().getFullYear()
-    const projectionStartYear = params.anneeRef
     const projection5ans: FinancesProjection[] = []
 
-    for (let y = projectionStartYear; y < projectionStartYear + 5; y++) {
-      let revAnnuel: number
-      let epargne: number
-      let charges: number
-      let verts: number
-
+    for (let y = params.anneeRef; y < params.anneeRef + 5; y++) {
+      let revAnnuel: number, epargne: number, ch: number, verts: number
       if (y === annee && moisAvecDonnees.length > 0) {
-        // Use actual data for current year if available
         revAnnuel = revenuAnnuel + (revMensuelProj * (12 - moisAvecDonnees.length))
-        charges = chargesTotales * 12
-        epargne = revAnnuel - charges
-        verts = moisAvecDonnees.filter(m => m.epargne >= params.objectifEpargne).length +
-          Math.max(0, 12 - moisAvecDonnees.length)
+        ch = chargesTotales * 12
+        epargne = revAnnuel - ch
+        verts = moisAvecDonnees.filter(m => m.epargne >= params.objectifEpargne).length
+          + Math.max(0, 12 - moisAvecDonnees.length)
       } else {
-        revAnnuel = revAnnuelProj
-        charges = chargesAnnuellesFixed
+        revAnnuel = revAnnuelProj; ch = chargesAnnuellesFixed
         epargne = epargnAnnuelleProj
         verts = epargne >= params.objectifEpargne * 12 ? 12 : Math.floor(epargne / params.objectifEpargne)
       }
-
-      if (y === projectionStartYear) {
-        soldeProj = params.soldeDepart
-      }
+      if (y === params.anneeRef) soldeProj = params.soldeDepart
       soldeProj += epargne
-
       projection5ans.push({
-        annee: y,
-        revenuAnnuel: revAnnuel,
-        chargesAnnuelles: charges,
-        epargnAnnuelle: epargne,
-        tauxEpargne: revAnnuel > 0 ? epargne / revAnnuel : 0,
-        soldeFin: soldeProj,
-        moisVerts: Math.max(0, Math.min(12, verts)),
+        annee: y, revenuAnnuel: revAnnuel, chargesAnnuelles: ch,
+        epargnAnnuelle: epargne, tauxEpargne: revAnnuel > 0 ? epargne / revAnnuel : 0,
+        soldeFin: soldeProj, moisVerts: Math.max(0, Math.min(12, verts)),
       })
     }
 
-    // Chart data
     const soldeChartData = [
       { nom: 'Départ', solde: params.soldeDepart },
       ...moisData.filter(m => m.hasData).map(m => ({ nom: m.nom, solde: m.solde })),
     ]
-
     const revenusChartData = moisData.map(m => ({
-      nom: m.nom,
-      revenus: m.revenuTotal,
-      charges: m.hasData ? m.chargesTotales : 0,
+      nom: m.nom, revenus: m.revenuTotal, charges: m.hasData ? m.chargesTotales : 0,
     }))
-
     const chargesPieData = charges.map(c => ({ nom: c.nom, montant: c.montant }))
 
     return {
@@ -517,8 +662,6 @@ export default function FinancesPage() {
     )
   }
 
-  const selectClass = 'rounded-md border border-white/15 bg-[#1a1a1a] text-white px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-sky-500'
-
   return (
     <div className="p-4 sm:p-6 max-w-full space-y-6">
       {/* Header */}
@@ -528,13 +671,11 @@ export default function FinancesPage() {
             <Users className="w-5 h-5 text-sky-400" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">Plan Épargne 1.1</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">Plan Épargne 1.2</h1>
             <p className="text-gray-400 mt-0.5 text-sm">{params.nom1} &amp; {params.nom2} · Suivi budgétaire</p>
           </div>
         </div>
-
         <div className="flex items-center gap-3 flex-wrap">
-          {/* Year navigation */}
           <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-xl px-2 py-1">
             <button onClick={() => setAnnee(a => a - 1)} className="p-1.5 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
               <ChevronLeft className="w-4 h-4" />
@@ -544,8 +685,6 @@ export default function FinancesPage() {
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
-
-          {/* Admin controls */}
           {isAdmin && (
             <>
               <Button variant="outline" size="sm" onClick={() => setShowCharges(true)} className="gap-1.5">
@@ -563,12 +702,7 @@ export default function FinancesPage() {
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <KPICard title="Revenus annuels" value={formatCurrency(dash.revenuAnnuel)} icon={TrendingUp} valueClassName="text-sky-400" />
         <KPICard title="Charges annuelles" value={formatCurrency(dash.chargesAnnuelles)} icon={TrendingDown} valueClassName="text-red-400" />
-        <KPICard
-          title="Épargne nette"
-          value={formatCurrency(dash.epargnAnnuelle)}
-          icon={Euro}
-          valueClassName={dash.epargnAnnuelle >= 0 ? 'text-emerald-400' : 'text-red-400'}
-        />
+        <KPICard title="Épargne nette" value={formatCurrency(dash.epargnAnnuelle)} icon={Euro} valueClassName={dash.epargnAnnuelle >= 0 ? 'text-emerald-400' : 'text-red-400'} />
         <KPICard title="Taux d'épargne" value={formatPercent(dash.tauxEpargne)} icon={TrendingUp} valueClassName={dash.tauxEpargne >= 0 ? 'text-emerald-400' : 'text-red-400'} />
         <KPICard title="Couverture urgence" value={`${(dash.couvertureUrgence * 100).toFixed(0)}%`} icon={Shield} valueClassName={dash.couvertureUrgence >= 1 ? 'text-emerald-400' : 'text-amber-400'} />
       </div>
@@ -588,6 +722,26 @@ export default function FinancesPage() {
         ))}
       </div>
 
+      {/* Structure des revenus */}
+      <div className="rounded-xl border border-white/10 bg-[#0d0d0d] overflow-hidden">
+        <button
+          onClick={() => setShowRevenusDetail(v => !v)}
+          className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/3 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <Euro className="w-4 h-4 text-sky-400" />
+            <span className="text-sm font-semibold text-white">Structure des revenus mensuels</span>
+            <span className="text-xs text-gray-500">projection {params.anneeRef}</span>
+          </div>
+          {showRevenusDetail ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
+        </button>
+        {showRevenusDetail && (
+          <div className="px-5 pb-5">
+            <RevenusStructureCard params={params} chargesTotales={dash.chargesTotales} />
+          </div>
+        )}
+      </div>
+
       {/* Charts row */}
       <div className="grid lg:grid-cols-2 gap-6">
         <Card>
@@ -602,12 +756,9 @@ export default function FinancesPage() {
             )}
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">
-              Répartition des charges — {formatCurrency(dash.chargesTotales)}/mois
-            </CardTitle>
+            <CardTitle className="text-sm">Répartition des charges — {formatCurrency(dash.chargesTotales)}/mois</CardTitle>
           </CardHeader>
           <CardContent>
             {dash.chargesPieData.length > 0 ? (
@@ -658,8 +809,8 @@ export default function FinancesPage() {
                         {MOIS_FULL[m.mois - 1]}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-right text-gray-300 tabular-nums">{m.hasData ? formatCurrency(m.revenu1) : '—'}</td>
-                    <td className="px-4 py-3 text-right text-gray-300 tabular-nums">{m.hasData ? formatCurrency(m.revenu2) : '—'}</td>
+                    <td className="px-4 py-3 text-right text-sky-300 tabular-nums">{m.hasData ? formatCurrency(m.revenu1) : '—'}</td>
+                    <td className="px-4 py-3 text-right text-purple-300 tabular-nums">{m.hasData ? formatCurrency(m.revenu2) : '—'}</td>
                     <td className="px-4 py-3 text-right text-white font-semibold tabular-nums">{m.hasData ? formatCurrency(m.revenuTotal) : '—'}</td>
                     <td className="px-4 py-3 text-right text-gray-400 tabular-nums">{formatCurrency(m.chargesFixes)}</td>
                     <td className="px-4 py-3 text-right text-gray-400 tabular-nums">{formatCurrency(m.chargesVariables)}</td>
@@ -731,10 +882,10 @@ export default function FinancesPage() {
         </CardContent>
       </Card>
 
-      {/* Charges breakdown info */}
+      {/* Charges breakdown */}
       <div className="grid sm:grid-cols-2 gap-4">
         {(['fixe', 'variable'] as const).map(type => {
-          const list = charges.filter(c => c.type === type)
+          const list  = charges.filter(c => c.type === type)
           const total = list.reduce((s, c) => s + c.montant, 0)
           return (
             <div key={type} className="rounded-xl border border-white/10 bg-[#111] p-5">
@@ -767,8 +918,7 @@ export default function FinancesPage() {
           onClose={() => setEditMois(null)}
           mois={editMois}
           annee={annee}
-          nom1={params.nom1}
-          nom2={params.nom2}
+          params={params}
           chargesTotales={dash.chargesTotales}
           existingEntry={moisEntries.find(m => m.mois === editMois) ?? null}
           onSuccess={fetchData}

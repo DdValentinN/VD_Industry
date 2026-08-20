@@ -44,6 +44,10 @@ export interface FinancesParams {
   anneeRef: number
   revenu1Projection: number
   revenu2Projection: number
+  salaire1: number
+  apl1: number
+  aideMobili1: number
+  primeActivite1: number
 }
 
 export interface FinancesCharge {

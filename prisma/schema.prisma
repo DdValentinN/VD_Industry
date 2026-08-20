@@ -41,8 +41,12 @@ model FinancesParams {
   objectifEpargne    Float  @default(500)
   nbMoisSecurite     Int    @default(6)
   anneeRef           Int    @default(2026)
-  revenu1Projection  Float  @default(2332)
-  revenu2Projection  Float  @default(436)
+  revenu1Projection  Float  @default(2085)
+  revenu2Projection  Float  @default(511)
+  salaire1           Float  @default(1636)
+  apl1               Float  @default(199)
+  aideMobili1        Float  @default(100)
+  primeActivite1     Float  @default(150)
 }
 
 model FinancesCharge {
